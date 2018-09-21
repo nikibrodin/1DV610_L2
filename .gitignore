@@ -41,5 +41,8 @@ Temporary Items
 !.vscode/launch.json
 !.vscode/extensions.json
 
-
 # End of https://www.gitignore.io/api/visualstudiocode
+
+### DataBase ###
+
+/database.txt

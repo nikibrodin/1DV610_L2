@@ -4,20 +4,20 @@ class UserModel {
 
     private $username;
     private $password;
-    private $myUsername = "Niki";
 
-    public function __construct ($username, $password) {
+    public function setUsername(string $newUserName)  {
+		$this->username = $newUserName;
+	}
 
-        $this->username = $username;
-        $this->password = $password;
-
+    public function getUsername() : string {
+        return $this->username;
     }
 
-    //SHOULD IMPLEMENT A DATABASE.
-    public function isAuthenticated() : bool {
-
-        return $this->username == $this->myUsername;
-
+    public function setPassword(string $newPassword)  {
+		$this->password = $newPassword;
     }
-
+    
+    public function getPassword() : string {
+        return $this->password;
+    }
 }

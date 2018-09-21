@@ -1,31 +1,34 @@
 <?php
 
 class UserController {
-    private $view;
+    private $loginView;
     private $user;
+    private $dataBase;
 
 
-    public function __construct (LoginView $view) {
-        $this->view = $view;
+    public function __construct (LoginView $loginView, DataBaseModel $dataBase) {
+        $this->loginView = $loginView;
+        $this->dataBase = $dataBase;
+
     }
 
     public function authenticateUser() {
 
         //THE USER HAS PUT USERNAME AND PASSWORD
-        if ($this->view->userWantsToLogin()) {
+        if ($this->loginView->userWantsToLogin()) {
 
             //SHOULD RETURN A MODEL OBJECT
-            $this->user = $this->view->getRequestUserName();
+            $this->user = $this->loginView->getRequestUserName();
 
             //ONLY WORKS WITH USERNAME: Niki
-            if ($this->user->isAuthenticated()) {
+            if ($this->dataBase->isAuthenticated($this->user)) {
 
-                //$this->view->response();
-                echo 'User was -found!';
+                return true;
             
             } else {
 
-                throw new Exception("THE USER WAS NOT FOUND");
+                return false;
+                // throw new Exception("THE USER WAS NOT FOUND");
 
             }
             

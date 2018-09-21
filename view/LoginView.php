@@ -20,13 +20,17 @@ class LoginView {
 	public function response() {
 		$message = '';
 
-		if (!isset($_POST[self::$name])) {
-			$message = 'Username is missing';
+		if (isset($_POST[self::$password]) && $_POST[self::$password] == "") {
+		 	$message = 'Password is missing';
 		}
 
-		if (!isset($_POST[self::$password])){
-			$message = 'Password is missing';
-		}
+		if (isset($_POST[self::$password]) && $_POST[self::$name] == "") {
+			$message = 'Username is missing';
+	   }
+		// if ($_POST[self::$name] == '' && $_POST[self::$password] == '') {
+		// 	$message = 'Username is missing';
+		// }
+
 		$response = $this->generateLoginFormHTML($message);
 		//$response .= $this->generateLogoutButtonHTML($message);
 		return $response;
@@ -91,8 +95,12 @@ class LoginView {
 		$rawPassword = $_POST[self::$password];
 		$filteredPassword = trim($rawPassword);
 
+		$user = new UserModel();
+		$user->setUsername($filteredUsername);
+		$user->setPassword($filteredPassword);
+
 		//RETURNS USERMODEL OBJECT
-		return new UserModel($filteredUsername, $filteredPassword);
+		return $user;
 	}
 	
 }
