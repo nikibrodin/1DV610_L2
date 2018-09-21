@@ -20,7 +20,7 @@ class UserController {
             //SHOULD RETURN A MODEL OBJECT
             $this->user = $this->loginView->getRequestUserName();
 
-            //ONLY WORKS WITH USERNAME: Niki
+            //ONLY WORKS WITH: nikiniki
             if ($this->dataBase->isAuthenticated($this->user)) {
 
                 return true;
