@@ -10,8 +10,6 @@ class LoginView {
 	private static $keep = 'LoginView::KeepMeLoggedIn';
 	private static $messageId = 'LoginView::Message';
 
-	
-
 	/**
 	 * Create HTTP response
 	 *
@@ -21,7 +19,7 @@ class LoginView {
 	 */
 	public function response() {
 		$message = '';
-		
+
 		$response = $this->generateLoginFormHTML($message);
 		//$response .= $this->generateLogoutButtonHTML($message);
 		return $response;
@@ -67,10 +65,27 @@ class LoginView {
 			</form>
 		';
 	}
+
+	//CHECKS IF USERNAME IS SET.
+	public function userWantsToLogin() : bool {
+
+		return isset($_POST[self::$name]) && isset($_POST[self::$password]);
+	
+	}
 	
 	//CREATE GET-FUNCTIONS TO FETCH REQUEST VARIABLES
-	private function getRequestUserName() {
+	public function getRequestUserName() : UserModel {
+
 		//RETURN REQUEST VARIABLE: USERNAME
+		$rawUsername = $_POST[self::$name];
+		$filteredUsername = trim($rawUsername);
+
+		//RETURN REQUEST VARIABLE: PASSWORD
+		$rawPassword = $_POST[self::$password];
+		$filteredPassword = trim($rawPassword);
+
+		//RETURNS USERMODEL OBJECT
+		return new UserModel($filteredUsername, $filteredPassword);
 	}
 	
 }
