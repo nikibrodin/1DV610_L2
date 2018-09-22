@@ -22,7 +22,7 @@ class UserController {
 
             //ONLY WORKS WITH: nikiniki
             if ($this->dataBase->isAuthenticated($this->user)) {
-
+                echo "Logged in."
                 return true;
             
             } else {
