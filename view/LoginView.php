@@ -21,14 +21,19 @@ class LoginView {
 		$message = '';
 
 		self::$cookieName = $this->getCookieName();
+		self::$cookiePassword = $this->getCookiePassword();
 
 		if (isset($_POST[self::$password]) && $_POST[self::$password] == "") {
 		 	$message = 'Password is missing';
 		}
 
-		if (isset($_POST[self::$password]) && $_POST[self::$name] == "") {
+		if (isset($_POST[self::$name]) && $_POST[self::$name] == "") {
 			$message = 'Username is missing';
-	   }
+		}
+		   
+		if (isset($_POST[self::$password]) && isset($_POST[self::$name])) {
+			$message = 'Wrong name or password';
+	   	}
 		// if ($_POST[self::$name] == '' && $_POST[self::$password] == '') {
 		// 	$message = 'Username is missing';
 		// }
@@ -93,12 +98,14 @@ class LoginView {
 		$rawUsername = $_POST[self::$name];
 		$filteredUsername = trim($rawUsername);
 
-		//SET COOKIE FOR USERNAME
-		$this->setCookieName($filteredUsername);
 
 		//RETURN REQUEST VARIABLE: PASSWORD
 		$rawPassword = $_POST[self::$password];
 		$filteredPassword = trim($rawPassword);
+
+		// SET COOKIES
+		$this->setCookieName($filteredUsername);
+		$this->setCookiePassword($filteredPassword);
 
 		$user = new UserModel();
 		$user->setUsername($filteredUsername);
@@ -120,6 +127,20 @@ class LoginView {
 	// SET COOKIE
     public function setCookieName($name) {
 		$_COOKIE[self::$cookieName] = $name;
+	}
+	
+	// GET COOKIE PASSWORD
+	public function getCookiePassword() {
+		if (isset($_COOKIE[self::$cookiePassword])) {
+			return $_COOKIE[self::$cookiePassword];
+		} else {
+			return;
+		}
+	}
+
+	// SET COOKIE
+    public function setCookiePassword($password) {
+		$_COOKIE[self::$cookiePassword] = $password;
     }
 	
 }

@@ -10,29 +10,20 @@ class DataBaseModel {
     }
 
     //SHOULD IMPLEMENT A DATABASE.
-    public function isAuthenticated(UserModel $user) : bool {
-        
-        // $fileResource = fopen($fileName, 'r');
-        // $fileSize = filesize($fileName);
-        // $fileText = fread($fileResource, $fileSize);
-        // fclose($fileResource);
-        // echo $fileText;
-        $userName = $user->getUsername();
-        $passWord = $user->getPassword();
-        
+    public function isAuthenticated (UserModel $user) : bool {
 
-        
-        $fileName = "./database.txt";
-        $lines = file ($fileName, FILE_IGNORE_NEW_LINES);
+        $userName = $user->getUsername();
+        $password = $user->getPassword();
 
         $bool = false;
-        foreach ($lines as $line) {
-            // echo $line;
-            if ($line == $userName . $passWord) {
+
+        $xml = simplexml_load_file("./database.xml");
+
+        foreach($xml->children() as $child) {
+            if ($child["username"] == $userName && $child["password"] == $password) {
                 $bool = true;
-            };
+            }
         }
-        // echo $userName . $passWord;
 
         return $bool;
 

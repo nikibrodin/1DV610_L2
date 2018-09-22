@@ -17,19 +17,17 @@ class UserController {
         //THE USER HAS PUT USERNAME AND PASSWORD
         if ($this->loginView->userWantsToLogin()) {
 
-            //SHOULD RETURN A MODEL OBJECT
+            // SHOULD RETURN A MODEL OBJECT (USER)
             $this->user = $this->loginView->getRequestUserName();
 
-            //ONLY WORKS WITH: nikiniki
+            // AUTHENTICATE USER
             if ($this->dataBase->isAuthenticated($this->user)) {
-                // echo "Logged in.";
 
                 return true;
             
             } else {
 
                 return false;
-                // throw new Exception("THE USER WAS NOT FOUND");
 
             }
             
