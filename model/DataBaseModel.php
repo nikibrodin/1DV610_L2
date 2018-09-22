@@ -27,12 +27,12 @@ class DataBaseModel {
 
         $bool = false;
         foreach ($lines as $line) {
-            echo $line;
+            // echo $line;
             if ($line == $userName . $passWord) {
                 $bool = true;
             };
         }
-        echo $userName . $passWord;
+        // echo $userName . $passWord;
 
         return $bool;
 
