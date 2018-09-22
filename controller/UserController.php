@@ -23,7 +23,7 @@ class UserController {
             //ONLY WORKS WITH: nikiniki
             if ($this->dataBase->isAuthenticated($this->user)) {
                 echo "Logged in.";
-                
+
                 return true;
             
             } else {
@@ -37,6 +37,8 @@ class UserController {
         } else {
 
             throw new Exception("Not implemented");
+
+            return false;
 
         }
     }
