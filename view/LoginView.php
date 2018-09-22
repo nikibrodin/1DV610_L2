@@ -39,9 +39,13 @@ class LoginView {
 			$message = 'Password is missing';
 	   	}
 
-	   if (isset($_POST[self::$name]) && $_POST[self::$name] == "") {
+	    if (isset($_POST[self::$name]) && $_POST[self::$name] == "") {
 		   $message = 'Username is missing';
-	   	}
+		}
+		   
+		if (isset($_POST[self::$logout])) {
+			$message = 'Bye bye!';
+		}
 
 
 		$response = $this->generateLoginFormHTML($message);
@@ -53,7 +57,7 @@ class LoginView {
 		}
 
 		if ($userStorage->isSet() && !isset($_POST[self::$name])) {
-			$message = 'Welcome';
+			$message = '';
 			$response = $this->generateLogoutButtonHTML($message);
 		}
 		//$response .= $this->generateLogoutButtonHTML($message);
