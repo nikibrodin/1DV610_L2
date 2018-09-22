@@ -51,6 +51,11 @@ class LoginView {
 			$message = 'Welcome';
 			$response = $this->generateLogoutButtonHTML($message);
 		}
+
+		if ($userStorage->isSet() && !isset($_POST[self::$name])) {
+			$message = 'Welcome';
+			$response = $this->generateLogoutButtonHTML($message);
+		}
 		//$response .= $this->generateLogoutButtonHTML($message);
 		return $response;
 	}
