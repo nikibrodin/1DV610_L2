@@ -23,17 +23,19 @@ class LoginView {
 		self::$cookieName = $this->getCookieName();
 		self::$cookiePassword = $this->getCookiePassword();
 
-		if (isset($_POST[self::$password]) && $_POST[self::$password] == "") {
-		 	$message = 'Password is missing';
-		}
-
-		if (isset($_POST[self::$name]) && $_POST[self::$name] == "") {
-			$message = 'Username is missing';
-		}
+		
 		   
 		if (isset($_POST[self::$password]) && isset($_POST[self::$name])) {
 			$message = 'Wrong name or password';
+		}
+		   
+		if (isset($_POST[self::$password]) && $_POST[self::$password] == "") {
+			$message = 'Password is missing';
 	   	}
+
+	   if (isset($_POST[self::$name]) && $_POST[self::$name] == "") {
+		   $message = 'Username is missing';
+	   }
 		// if ($_POST[self::$name] == '' && $_POST[self::$password] == '') {
 		// 	$message = 'Username is missing';
 		// }
