@@ -1,5 +1,7 @@
 <?php
 
+require_once('model/UserStorageModel.php'); //NEW
+
 class LoginView {
 	private static $login = 'LoginView::Login';
 	private static $logout = 'LoginView::Logout';
@@ -22,6 +24,10 @@ class LoginView {
 
 		self::$cookieName = $this->getCookieName();
 		self::$cookiePassword = $this->getCookiePassword();
+		// USER STORAGE MODEL DEPENDENCY
+		$userStorage = new UserStorageModel();
+
+
 
 		
 		   
@@ -35,12 +41,16 @@ class LoginView {
 
 	   if (isset($_POST[self::$name]) && $_POST[self::$name] == "") {
 		   $message = 'Username is missing';
-	   }
-		// if ($_POST[self::$name] == '' && $_POST[self::$password] == '') {
-		// 	$message = 'Username is missing';
-		// }
+	   	}
+
 
 		$response = $this->generateLoginFormHTML($message);
+
+		
+		if ($userStorage->isSet()) {
+			$message = 'Welcome';
+			$response = $this->generateLogoutButtonHTML($message);
+		}
 		//$response .= $this->generateLogoutButtonHTML($message);
 		return $response;
 	}
@@ -90,6 +100,12 @@ class LoginView {
 	public function userWantsToLogin() : bool {
 
 		return isset($_POST[self::$name]) && isset($_POST[self::$password]);
+	
+	}
+
+	public function userWantsToLogout() : bool {
+
+		return isset($_POST[self::$logout]);
 	
 	}
 	
