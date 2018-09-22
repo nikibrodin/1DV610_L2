@@ -23,7 +23,7 @@ class DataBaseModel {
 
         
         $fileName = "./database.txt";
-        $lines = file ($fileName);
+        $lines = file ($fileName, FILE_IGNORE_NEW_LINES);
 
         $bool = false;
         foreach ($lines as $line) {
