@@ -36,8 +36,6 @@ class UserController {
 
         } else {
 
-            throw new Exception("Not implemented");
-
             return false;
 
         }
