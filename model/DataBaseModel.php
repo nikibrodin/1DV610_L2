@@ -19,7 +19,7 @@ class DataBaseModel {
         // echo $fileText;
         $userName = $user->getUsername();
         $passWord = $user->getPassword();
-        echo $userName . $passWord;
+        
 
         
         $fileName = "./database.txt";
@@ -32,6 +32,7 @@ class DataBaseModel {
                 $bool = true;
             };
         }
+        echo $userName . $passWord;
 
         return $bool;
 
