@@ -19,7 +19,7 @@ class DataBaseModel {
         // echo $fileText;
         $userName = $user->getUsername();
         $passWord = $user->getPassword();
-        // echo $userName . $passWord;
+        echo $userName . $passWord;
 
         
         $fileName = "./database.txt";
@@ -27,7 +27,7 @@ class DataBaseModel {
 
         $bool = false;
         foreach ($lines as $line) {
-            // echo $line;
+            echo $line;
             if ($line == $userName . $passWord) {
                 $bool = true;
             };
