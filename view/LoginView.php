@@ -20,6 +20,8 @@ class LoginView {
 	public function response() {
 		$message = '';
 
+		self::$cookieName = $this->getCookieName();
+
 		if (isset($_POST[self::$password]) && $_POST[self::$password] == "") {
 		 	$message = 'Password is missing';
 		}
@@ -63,7 +65,7 @@ class LoginView {
 					<p id="' . self::$messageId . '">' . $message . '</p>
 					
 					<label for="' . self::$name . '">Username :</label>
-					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="" />
+					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="' . self::$cookieName . '" />
 
 					<label for="' . self::$password . '">Password :</label>
 					<input type="password" id="' . self::$password . '" name="' . self::$password . '" />
@@ -91,6 +93,9 @@ class LoginView {
 		$rawUsername = $_POST[self::$name];
 		$filteredUsername = trim($rawUsername);
 
+		//SET COOKIE FOR USERNAME
+		$this->setCookieName($filteredUsername);
+
 		//RETURN REQUEST VARIABLE: PASSWORD
 		$rawPassword = $_POST[self::$password];
 		$filteredPassword = trim($rawPassword);
@@ -102,5 +107,19 @@ class LoginView {
 		//RETURNS USERMODEL OBJECT
 		return $user;
 	}
+
+	// GET COOKIE
+	public function getCookieName() {
+		if (isset($_COOKIE[self::$cookieName])) {
+			return $_COOKIE[self::$cookieName];
+		} else {
+			return;
+		}
+	}
+
+	// SET COOKIE
+    public function setCookieName($name) {
+		$_COOKIE[self::$cookieName] = $name;
+    }
 	
 }
