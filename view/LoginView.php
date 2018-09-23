@@ -6,11 +6,16 @@ class LoginView {
 	private static $login = 'LoginView::Login';
 	private static $logout = 'LoginView::Logout';
 	private static $name = 'LoginView::UserName';
+	private static $registerName = 'RegisterView::UserName';
 	private static $password = 'LoginView::Password';
+	private static $registerPassword = 'RegisterView::Password';
+	private static $registerPasswordRepeat = 'RegisterView::PasswordRepeat';
 	private static $cookieName = 'LoginView::CookieName';
 	private static $cookiePassword = 'LoginView::CookiePassword';
 	private static $keep = 'LoginView::KeepMeLoggedIn';
 	private static $messageId = 'LoginView::Message';
+	private static $messageRegister = 'RegisterView::Message';
+	private static $savedName = '';
 
 	public function response() {
 
@@ -48,7 +53,6 @@ class LoginView {
 			}
 		} else if (isset($_POST[self::$logout])){
 
-			// unset($_POST[self::$logout]);
 			$message = 'Bye bye!';
 			$response = $this->generateLoginFormHTML($message);
 
@@ -56,14 +60,25 @@ class LoginView {
 			$message = '';
 			$response = $this->generateLogoutButtonHTML($message);
 		}
+		if (isset($_GET['register'])) {
+			$message = '';
+			$response = $this->generateRegisterFormHTML($message);
+		}
 		
 		return $response;
 	}
 
-	public function generateRegisterForm() {
+	public function generateRegister() {
+
+		if (empty($_GET)) {
 		return '
 			<a href="?register">Register a new user</a>
 		';
+		} else if (isset($_GET['register'])){
+		return '
+			<a href="?">Back to login</a>
+		';
+		}
 	}
 
 	private function generateLogoutButtonHTML($message) {
@@ -83,7 +98,7 @@ class LoginView {
 					<p id="' . self::$messageId . '">' . $message . '</p>
 					
 					<label for="' . self::$name . '">Username :</label>
-					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="' . self::$cookieName . '" />
+					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="' . self::$savedName . '" />
 
 					<label for="' . self::$password . '">Password :</label>
 					<input type="password" id="' . self::$password . '" name="' . self::$password . '" />
@@ -92,6 +107,32 @@ class LoginView {
 					<input type="checkbox" id="' . self::$keep . '" name="' . self::$keep . '" />
 					
 					<input type="submit" name="' . self::$login . '" value="login" />
+				</fieldset>
+			</form>
+		';
+	}
+
+	private function generateRegisterFormHTML($message) {
+		return '
+			<form action="?register" method="post" enctype="multipart/form-data">
+				<fieldset>
+					<legend>Register a new user - Write username and password</legend>
+					<p id="' . self::$messageRegister . '">' . $message . '</p>
+					
+					<label for="' . self::$registerName . '">Username :</label>
+					<input type="text" size="20" name="' . self::$registerName . '" id="' . self::$registerName . '" value="">
+					<br>
+					
+					<label for="' . self::$registerPassword . '">Password  :</label>
+					<input type="password" size="20" name="' . self::$registerPassword . '" id="' . self::$registerPassword . '" value="">
+					<br>
+			
+					<label for="' . self::$registerPasswordRepeat . '">Repeat password  :</label>
+					<input type="password" size="20" name="' . self::$registerPasswordRepeat . '" id="' . self::$registerPasswordRepeat . '" value="">
+					<br>
+			
+					<input id="submit" type="submit" name="DoRegistration" value="Register">
+					<br>
 				</fieldset>
 			</form>
 		';
@@ -109,6 +150,12 @@ class LoginView {
 		return isset($_POST[self::$logout]);
 	
 	}
+
+	public function userWantsRegister() : bool {
+
+		return isset($_GET['register']);
+	
+	}
 	
 	//CREATE GET-FUNCTIONS TO FETCH REQUEST VARIABLES
 	public function getRequestUserName() : UserModel {
@@ -116,6 +163,9 @@ class LoginView {
 		//RETURN REQUEST VARIABLE: USERNAME
 		$rawUsername = $_POST[self::$name];
 		$filteredUsername = trim($rawUsername);
+
+		// SET SAVED NAME
+		self::$savedName = $filteredUsername;
 
 
 		//RETURN REQUEST VARIABLE: PASSWORD

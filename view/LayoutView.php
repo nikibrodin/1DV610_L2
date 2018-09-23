@@ -12,7 +12,7 @@ class LayoutView {
         </head>
         <body>
           <h1>Assignment 2</h1>
-          ' . $v->generateRegisterForm() . '
+          ' . $v->generateRegister() . '
           ' . $this->renderIsLoggedIn($isLoggedIn) . '
           
           <div class="container">

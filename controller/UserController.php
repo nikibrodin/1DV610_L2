@@ -5,16 +5,21 @@ class UserController {
     private $user;
     private $dataBase;
     private $userStorage;
+    private $layoutView;
+    private $dateTimeView;
+    private $authenticated = false;
 
 
-    public function __construct (LoginView $loginView, DataBaseModel $dataBase, UserStorageModel $userStorage) {
+    public function __construct (LoginView $loginView, DataBaseModel $dataBase, UserStorageModel $userStorage, LayoutView $layoutView, DateTimeView $dateTimeView) {
         $this->loginView = $loginView;
         $this->dataBase = $dataBase;
         $this->userStorage = $userStorage;
+        $this->layoutView = $layoutView;
+        $this->dateTimeView = $dateTimeView;
 
     }
 
-    public function authenticateUser() {
+    public function authentication() {
 
         //THE USER HAS PUT USERNAME AND PASSWORD
         if ($this->loginView->userWantsToLogin()) {
@@ -25,18 +30,23 @@ class UserController {
             // AUTHENTICATE USER
             if ($this->dataBase->isAuthenticated($this->user)) {
                 $this->userStorage->saveUser($this->user);
-                return true;
+                $this->authenticated = true;
             } else {
-                return false;
+                $authenticated = false;
             }
         
         } else if ($this->loginView->userWantsToLogout()) {
             $this->userStorage->clear();
-            return false;
-            
+            $this->authenticated = false;
+
         // IF SESSION
         } else if ($this->userStorage->isSet()) {
-            return true;
+            $this->authenticated = true;
         }
+        if ($this->loginView->userWantsRegister()) {
+            // echo "register's here..";   
+        }
+
+        $this->layoutView->render($this->authenticated, $this->loginView, $this->dateTimeView);
     }
 }
