@@ -27,6 +27,8 @@ class LoginView {
 			$this->response = $this->generateLoginFormHTML($this->message);
 		}
 
+		// self::$cookieName = $this->getCookieName();
+		// self::$cookiePassword = $this->getCookiePassword();
 		// USER STORAGE MODEL DEPENDENCY
 		$userStorage = new UserStorageModel();
 
@@ -57,7 +59,7 @@ class LoginView {
 			}
 		} else if (isset($_POST[self::$logout])){
 
-			//$this->message = 'Bye bye!';
+			$this->message = 'Bye bye!';
 			$this->response = $this->generateLoginFormHTML($this->message);
 
 		} else if ($userStorage->isSet()) {
@@ -168,7 +170,7 @@ class LoginView {
 
 	//CHECKS IF USERNAME AND PASSWORD IS SET.
 	public function userWantsToLogin() : bool {
-		return isset($_POST[self::$name]) && isset($_POST[self::$password]) || isset($_COOKIE[self::$cookieName]);
+		return isset($_POST[self::$name]) && isset($_POST[self::$password]) || isset($_COOKIE[self::$cookieName]) && isset($_COOKIE[self::$cookiePassword]);;
 	}
 
 	//CHECKS IF WANT TO LOGOUT.
@@ -253,7 +255,7 @@ class LoginView {
 	}
 
 	public function isLoggedIn() : bool {
-		return isset($_COOKIE[self::$cookieName]);
+		return isset($_COOKIE[self::$cookieName]) && isset($_COOKIE[self::$cookiePassword]);
 	}
 	
 	//SET COOKIES
