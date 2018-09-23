@@ -44,7 +44,7 @@ class UserController {
             $this->authenticated = true;
         }
         if ($this->loginView->userWantsToRegister()) {
-            echo "user wants to register";   
+            // echo "user wants to register";   
         }
 
         $this->layoutView->render($this->authenticated, $this->loginView, $this->dateTimeView);
