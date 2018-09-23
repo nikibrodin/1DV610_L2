@@ -12,63 +12,54 @@ class LoginView {
 	private static $keep = 'LoginView::KeepMeLoggedIn';
 	private static $messageId = 'LoginView::Message';
 
-	/**
-	 * Create HTTP response
-	 *
-	 * Should be called after a login attempt has been determined
-	 *
-	 * @return  void BUT writes to standard output and cookies!
-	 */
 	public function response() {
-		$message = '';
+
 
 		self::$cookieName = $this->getCookieName();
+		// echo self::$cookieName;
 		self::$cookiePassword = $this->getCookiePassword();
 		// USER STORAGE MODEL DEPENDENCY
 		$userStorage = new UserStorageModel();
 
-
-
-		
-		   
-		if (isset($_POST[self::$password]) && isset($_POST[self::$name])) {
-			$message = 'Wrong name or password';
-		}
-		   
-		if (isset($_POST[self::$password]) && $_POST[self::$password] == "") {
-			$message = 'Password is missing';
-	   	}
-
-	    if (isset($_POST[self::$name]) && $_POST[self::$name] == "") {
-		   $message = 'Username is missing';
-		}
-		   
-		if (isset($_POST[self::$logout])) {
-			$message = 'Bye bye!';
-		}
-
-
+		$message = '';
 		$response = $this->generateLoginFormHTML($message);
 
-		
-		if ($userStorage->isSet()) {
-			$message = 'Welcome';
-			$response = $this->generateLogoutButtonHTML($message);
-		}
+		// IF LOGIN
+		if (isset($_POST[self::$login])) {
 
-		if ($userStorage->isSet() && !isset($_POST[self::$name])) {
+			if (isset($_POST[self::$password]) && isset($_POST[self::$name])) {
+				$message = 'Wrong name or password';
+				$response = $this->generateLoginFormHTML($message);
+			}
+			   
+			if (isset($_POST[self::$password]) && $_POST[self::$password] == "") {
+				$message = 'Password is missing';
+				$response = $this->generateLoginFormHTML($message);
+			   }
+	
+			if (isset($_POST[self::$name]) && $_POST[self::$name] == "") {
+			   $message = 'Username is missing';
+			   $response = $this->generateLoginFormHTML($message);
+			}
+
+			if ($userStorage->isSet()) {
+				$message = 'Welcome';
+				$response = $this->generateLogoutButtonHTML($message);
+			}
+		} else if (isset($_POST[self::$logout])){
+
+			// unset($_POST[self::$logout]);
+			$message = 'Bye bye!';
+			$response = $this->generateLoginFormHTML($message);
+
+		} else if ($userStorage->isSet()) {
 			$message = '';
 			$response = $this->generateLogoutButtonHTML($message);
 		}
-		//$response .= $this->generateLogoutButtonHTML($message);
+		
 		return $response;
 	}
 
-	/**
-	* Generate HTML code on the output buffer for the logout button
-	* @param $message, String output message
-	* @return  void, BUT writes to standard output!
-	*/
 	private function generateLogoutButtonHTML($message) {
 		return '
 			<form  method="post" >
@@ -78,11 +69,6 @@ class LoginView {
 		';
 	}
 	
-	/**
-	* Generate HTML code on the output buffer for the logout button
-	* @param $message, String output message
-	* @return  void, BUT writes to standard output!
-	*/
 	private function generateLoginFormHTML($message) {
 		return '
 			<form method="post" > 
@@ -153,6 +139,7 @@ class LoginView {
 
 	// SET COOKIE
     public function setCookieName($name) {
+		setcookie(self::$cookieName, $name);
 		$_COOKIE[self::$cookieName] = $name;
 	}
 	
@@ -167,7 +154,8 @@ class LoginView {
 
 	// SET COOKIE
     public function setCookiePassword($password) {
+		setcookie(self::$cookiePassword, $password);
 		$_COOKIE[self::$cookiePassword] = $password;
-    }
+	}
 	
 }

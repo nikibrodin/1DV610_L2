@@ -29,10 +29,14 @@ class UserController {
             } else {
                 return false;
             }
+        
         } else if ($this->loginView->userWantsToLogout()) {
-            // echo "Trying to logout.";
             $this->userStorage->clear();
             return false;
+            
+        // IF SESSION
+        } else if ($this->userStorage->isSet()) {
+            return true;
         }
     }
 }

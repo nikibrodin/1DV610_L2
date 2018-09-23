@@ -20,7 +20,12 @@ class UserStorageModel {
         // echo "User saved";
     }
 
+    public function getSessID() {
+        return session_id();
+    }
+
     public function clear() {
         unset($_SESSION[self::$SESSION_KEY]);
+        session_destroy();
     }
 }
