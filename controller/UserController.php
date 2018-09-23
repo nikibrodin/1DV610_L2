@@ -43,8 +43,8 @@ class UserController {
         } else if ($this->userStorage->isSet()) {
             $this->authenticated = true;
         }
-        if ($this->loginView->userWantsRegister()) {
-            // echo "register's here..";   
+        if ($this->loginView->userWantsToRegister()) {
+            echo "user wants to register";   
         }
 
         $this->layoutView->render($this->authenticated, $this->loginView, $this->dateTimeView);
