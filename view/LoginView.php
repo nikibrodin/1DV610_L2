@@ -12,6 +12,7 @@ class LoginView {
 	private static $keep = 'LoginView::KeepMeLoggedIn';
 	private static $messageId = 'LoginView::Message';
 
+	private static $register = 'RegisterView::Register';
 	private static $registerName = 'RegisterView::UserName';
 	private static $registerPassword = 'RegisterView::Password';
 	private static $registerPasswordRepeat = 'RegisterView::PasswordRepeat';
@@ -67,7 +68,7 @@ class LoginView {
 			$this->message = '';
 			$this->response = $this->generateRegisterFormHTML($this->message);
 		}
-		if (isset($_POST['DoRegistration'])) {
+		if (isset($_POST[self::$register])) {
 			if (strlen($_POST[self::$registerName]) < 4) {
 				$this->message = 'Username has too few characters, at least 3 characters.<br>';
 			}
@@ -152,7 +153,7 @@ class LoginView {
 					<input type="password" size="20" name="' . self::$registerPasswordRepeat . '" id="' . self::$registerPasswordRepeat . '" value="">
 					<br>
 			
-					<input id="submit" type="submit" name="DoRegistration" value="Register">
+					<input id="submit" type="submit" name="' . self::$register . '" value="Register">
 					<br>
 				</fieldset>
 			</form>
@@ -174,7 +175,7 @@ class LoginView {
 
 	public function userWantsToRegister() : bool {
 
-		if (isset($_POST['DoRegistration'])) {
+		if (isset($_POST[self::$register])) {
 			//RETURN REQUEST VARIABLE: REGISTER USERNAME
 			$rawUsername = $_POST[self::$registerName];
 			$filteredUsername = trim($rawUsername);
