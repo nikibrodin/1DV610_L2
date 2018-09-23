@@ -168,7 +168,7 @@ class LoginView {
 
 	//CHECKS IF USERNAME AND PASSWORD IS SET.
 	public function userWantsToLogin() : bool {
-		return isset($_POST[self::$name]) && isset($_POST[self::$password]) || isset($_COOKIE[self::$cookieName]) && isset($_COOKIE[self::$cookiePassword]);;
+		return isset($_POST[self::$name]) && isset($_POST[self::$password]) || isset($_COOKIE[self::$cookieName]);
 	}
 
 	//CHECKS IF WANT TO LOGOUT.
@@ -253,7 +253,7 @@ class LoginView {
 	}
 
 	public function isLoggedIn() : bool {
-		return isset($_COOKIE[self::$cookieName]) && isset($_COOKIE[self::$cookiePassword]);
+		return isset($_COOKIE[self::$cookieName]);
 	}
 	
 	//SET COOKIES
