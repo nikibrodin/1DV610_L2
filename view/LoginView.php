@@ -27,8 +27,6 @@ class LoginView {
 			$this->response = $this->generateLoginFormHTML($this->message);
 		}
 
-		// self::$cookieName = $this->getCookieName();
-		// self::$cookiePassword = $this->getCookiePassword();
 		// USER STORAGE MODEL DEPENDENCY
 		$userStorage = new UserStorageModel();
 
@@ -59,7 +57,7 @@ class LoginView {
 			}
 		} else if (isset($_POST[self::$logout])){
 
-			$this->message = 'Bye bye!';
+			//$this->message = 'Bye bye!';
 			$this->response = $this->generateLoginFormHTML($this->message);
 
 		} else if ($userStorage->isSet()) {
