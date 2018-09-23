@@ -70,15 +70,15 @@ class LoginView {
 		}
 		if (isset($_POST[self::$register])) {
 			if (strlen($_POST[self::$registerName]) < 4) {
-				$this->message = 'Username has too few characters, at least 3 characters.<br>';
+				$this->message = 'Username has too few characters, at least 3 characters.';
 			}
 	
 			if (strlen($_POST[self::$registerPassword]) < 7) {
-				$this->message .= 'Password has too few characters, at least 6 characters.<br>';
+				$this->message .= 'Password has too few characters, at least 6 characters.';
 			}
 
 			if ($_POST[self::$registerPassword] != $_POST[self::$registerPasswordRepeat]) {
-				$this->message .= 'Passwords do not match.<br>';
+				$this->message .= 'Passwords do not match.';
 			}
 	
 			if (strlen($_POST[self::$registerName]) > 3 && strlen($_POST[self::$registerPassword]) > 6) {
