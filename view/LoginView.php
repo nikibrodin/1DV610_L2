@@ -60,6 +60,12 @@ class LoginView {
 		return $response;
 	}
 
+	public function generateRegisterForm() {
+		return '
+			<a href="?register">Register a new user</a>
+		';
+	}
+
 	private function generateLogoutButtonHTML($message) {
 		return '
 			<form  method="post" >
