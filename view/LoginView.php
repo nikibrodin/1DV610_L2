@@ -1,6 +1,6 @@
 <?php
 
-require_once('model/UserStorageModel.php'); //NEW
+// require_once('model/UserStorageModel.php'); //NEW
 
 class LoginView {
 	private static $login = 'LoginView::Login';
@@ -83,6 +83,10 @@ class LoginView {
 
 		 	$this->response = $this->generateRegisterFormHTML($this->message);
 		}
+		//if ($this->isLoggedIn()) {
+		//	$this->message = '';
+		//	$this->response = $this->generateLogoutButtonHTML($this->message);
+		//}
 		
 		return $this->response;
 	}
@@ -157,17 +161,14 @@ class LoginView {
 		';
 	}
 
-	//CHECKS IF USERNAME IS SET.
+	//CHECKS IF USERNAME AND PASSWORD IS SET.
 	public function userWantsToLogin() : bool {
-
-		return isset($_POST[self::$name]) && isset($_POST[self::$password]);
-	
+		return isset($_POST[self::$name]) && isset($_POST[self::$password]) || isset($_COOKIE[self::$cookieName]) && isset($_COOKIE[self::$cookiePassword]);;
 	}
 
+	//CHECKS IF WANT TO LOGOUT.
 	public function userWantsToLogout() : bool {
-
-		return isset($_POST[self::$logout]);
-	
+		return isset($_POST[self::$logout]);	
 	}
 
 	public function userWantsToRegister() : bool {
@@ -193,25 +194,27 @@ class LoginView {
 	//CREATE GET-FUNCTIONS TO FETCH REQUEST VARIABLES
 	public function getRequestUserName() : UserModel {
 
-		//RETURN REQUEST VARIABLE: USERNAME
-		$rawUsername = $_POST[self::$name];
-		$filteredUsername = trim($rawUsername);
-
-		// SET SAVED NAME
-		self::$savedName = $filteredUsername;
-
-
-		//RETURN REQUEST VARIABLE: PASSWORD
-		$rawPassword = $_POST[self::$password];
-		$filteredPassword = trim($rawPassword);
-
-		// SET COOKIES <---- SHOULD PROBABLY MOVE!!!
-		$this->setCookieName($filteredUsername);
-		$this->setCookiePassword($filteredPassword);
-
 		$user = new UserModel();
-		$user->setUsername($filteredUsername);
-		$user->setPassword($filteredPassword);
+		if (isset($_COOKIE[self::$cookieName]) && isset($_COOKIE[self::$cookiePassword])) {
+			$user->setUsername($_COOKIE[self::$cookieName]);
+			$user->setPassword($_COOKIE[self::$cookiePassword]);
+		} else {
+			//RETURN REQUEST VARIABLE: USERNAME
+			$rawUsername = $_POST[self::$name];
+			$filteredUsername = trim($rawUsername);
+
+			// SET SAVED NAME
+			self::$savedName = $filteredUsername;
+
+
+			//RETURN REQUEST VARIABLE: PASSWORD
+			$rawPassword = $_POST[self::$password];
+			$filteredPassword = trim($rawPassword);
+
+		
+			$user->setUsername($filteredUsername);
+			$user->setPassword($filteredPassword);
+		}
 
 		//RETURNS USERMODEL OBJECT
 		return $user;
@@ -227,14 +230,9 @@ class LoginView {
 		// SET SAVED NAME
 		self::$savedName = $filteredUsername;
 
-
 		//RETURN REQUEST VARIABLE: PASSWORD
 		$rawPassword = $_POST[self::$password];
 		$filteredPassword = trim($rawPassword);
-
-		// SET COOKIES <---- SHOULD PROBABLY MOVE!!!
-		$this->setCookieName($filteredUsername);
-		$this->setCookiePassword($filteredPassword);
 
 		$user = new UserModel();
 		$user->setUsername($filteredUsername);
@@ -242,6 +240,28 @@ class LoginView {
 
 		//RETURNS USERMODEL OBJECT
 		return $user;
+	}
+
+	//CHECKS IF USER WANTS TO KEEP BEING LOGGED IN.
+	public function keepLoggedIn() : bool {
+		return isset($_POST[self::$keep]);
+	}
+
+	public function isLoggedIn() : bool {
+		return isset($_COOKIE[self::$cookieName]) && isset($_COOKIE[self::$cookiePassword]);
+	}
+	
+	//SET COOKIES
+	public function setCookies(UserModel $user) {
+		$this->setCookieName($user->getUsername());
+		$this->setCookiePassword($user->getPassword());
+	}
+
+	public function removeCookies() {
+		if (isset($_COOKIE[self::$cookieName]) && isset($_COOKIE[self::$cookiePassword])) {
+			setcookie(self::$cookieName, "", time()-3600);
+			setcookie(self::$cookiePassword, "", time()-3600);
+		}
 	}
 
 	// GET COOKIE
@@ -256,7 +276,7 @@ class LoginView {
 	// SET COOKIE
     public function setCookieName($name) {
 		setcookie(self::$cookieName, $name);
-		$_COOKIE[self::$cookieName] = $name;
+		// $_COOKIE[self::$cookieName] = $name;
 	}
 	
 	// GET COOKIE PASSWORD
@@ -271,7 +291,7 @@ class LoginView {
 	// SET COOKIE
     public function setCookiePassword($password) {
 		setcookie(self::$cookiePassword, $password);
-		$_COOKIE[self::$cookiePassword] = $password;
+		// $_COOKIE[self::$cookiePassword] = $password;
 	}
 	
 }

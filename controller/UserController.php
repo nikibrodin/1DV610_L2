@@ -35,16 +35,22 @@ class UserController {
                 $authenticated = false;
             }
         
-        } else if ($this->loginView->userWantsToLogout()) {
+        } 
+        if ($this->loginView->userWantsToLogout()) {
+            $this->loginView->removeCookies();
             $this->userStorage->clear();
             $this->authenticated = false;
-
+        } 
         // IF SESSION
-        } else if ($this->userStorage->isSet()) {
+        if ($this->userStorage->isSet()) {
             $this->authenticated = true;
         }
         if ($this->loginView->userWantsToRegister()) {
             // echo "user wants to register";   
+        }
+        if ($this->loginView->keepLoggedIn()) {
+            
+            $this->loginView->setCookies($this->user);
         }
 
         $this->layoutView->render($this->authenticated, $this->loginView, $this->dateTimeView);
