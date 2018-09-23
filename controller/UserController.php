@@ -9,7 +9,6 @@ class UserController {
     private $dateTimeView;
     private $authenticated = false;
 
-
     public function __construct (LoginView $loginView, DataBaseModel $dataBase, UserStorageModel $userStorage, LayoutView $layoutView, DateTimeView $dateTimeView) {
         $this->loginView = $loginView;
         $this->dataBase = $dataBase;
@@ -29,17 +28,31 @@ class UserController {
 
             // AUTHENTICATE USER
             if ($this->dataBase->isAuthenticated($this->user)) {
-                $this->userStorage->saveUser($this->user);
-                $this->authenticated = true;
+                if ($this->userStorage->isSet()) {
+                    $this->loginView->setMessage('');
+                    $this->authenticated = true;
+                } else {
+                    $this->userStorage->saveUser($this->user);
+                    $this->loginView->setMessage('Welcome');
+                    $this->authenticated = true;
+                }
             } else {
-                $authenticated = false;
+                $this->loginView->setMessage('Wrong name or password');
+                $this->authenticated = false;
             }
         
         } 
         if ($this->loginView->userWantsToLogout()) {
-            $this->loginView->removeCookies();
-            $this->userStorage->clear();
-            $this->authenticated = false;
+            if (!$this->userStorage->isSet()) {
+                $this->loginView->setMessage('');
+                $this->authenticated = false;
+            } else {
+                $this->loginView->setMessage('Bye bye!');
+                $this->loginView->removeCookies();
+                $this->userStorage->clear();
+                $this->authenticated = false;
+            }
+            
         } 
         // IF SESSION
         if ($this->userStorage->isSet()) {

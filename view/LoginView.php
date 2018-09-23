@@ -23,13 +23,10 @@ class LoginView {
 	private $response;
 
 	public function response() {
-
 		if (empty($this->response)) {
 			$this->response = $this->generateLoginFormHTML($this->message);
 		}
 
-		// self::$cookieName = $this->getCookieName();
-		// self::$cookiePassword = $this->getCookiePassword();
 		// USER STORAGE MODEL DEPENDENCY
 		$userStorage = new UserStorageModel();
 
@@ -37,7 +34,6 @@ class LoginView {
 		if (isset($_POST[self::$login])) {
 
 			if (isset($_POST[self::$password]) && isset($_POST[self::$name])) {
-				$this->message = 'Wrong name or password';
 				$this->response = $this->generateLoginFormHTML($this->message);
 			}
 			   
@@ -52,12 +48,16 @@ class LoginView {
 			}
 
 			if ($userStorage->isSet()) {
-				$this->message = 'Welcome';
+				$this->response = $this->generateLogoutButtonHTML($this->message);
+			}
+
+			if ($this->isLoggedIn()) {
+				$this->message = 'Welcome back with cookie';
 				$this->response = $this->generateLogoutButtonHTML($this->message);
 			}
 		} else if (isset($_POST[self::$logout])){
 
-			$this->message = 'Bye bye!';
+			//$this->message = 'Bye bye!';
 			$this->response = $this->generateLoginFormHTML($this->message);
 
 		} else if ($userStorage->isSet()) {
@@ -84,7 +84,7 @@ class LoginView {
 		 	$this->response = $this->generateRegisterFormHTML($this->message);
 		}
 		//if ($this->isLoggedIn()) {
-		//	$this->message = '';
+		//	$this->message = 'Welcome back with cookie';
 		//	$this->response = $this->generateLogoutButtonHTML($this->message);
 		//}
 		
@@ -159,6 +159,11 @@ class LoginView {
 				</fieldset>
 			</form>
 		';
+	}
+
+	// SET FLASH MESSAGE
+	public function setMessage($message) {
+		$this->message = $message;
 	}
 
 	//CHECKS IF USERNAME AND PASSWORD IS SET.
