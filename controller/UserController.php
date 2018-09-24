@@ -46,7 +46,7 @@ class UserController {
         
         } 
 
-        //THE USER HAS PUT USERNAME AND PASSWORD
+        //THE USER HAS COOKIES
         if ($this->loginView->userWantsToLoginWithCookies()) {
 
             // SHOULD RETURN A MODEL OBJECT (USER)

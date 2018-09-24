@@ -19,6 +19,7 @@ class LoginView {
 	private static $messageRegister = 'RegisterView::Message';
 
 	private static $savedName = '';
+	private static $savedRegisterName = '';
 	private $message = '';
 	private $response;
 
@@ -142,7 +143,7 @@ class LoginView {
 					<p id="' . self::$messageRegister . '">' . $message . '</p>
 					
 					<label for="' . self::$registerName . '">Username :</label>
-					<input type="text" size="20" name="' . self::$registerName . '" id="' . self::$registerName . '" value="">
+					<input type="text" size="20" name="' . self::$registerName . '" id="' . self::$registerName . '" value="' . self::$savedRegisterName . '">
 					<br>
 					
 					<label for="' . self::$registerPassword . '">Password  :</label>
@@ -185,6 +186,9 @@ class LoginView {
 			//RETURN REQUEST VARIABLE: REGISTER USERNAME
 			$rawUsername = $_POST[self::$registerName];
 			$filteredUsername = trim($rawUsername);
+
+			// SET SAVED REGISTER NAME
+			self::$savedRegisterName = $filteredUsername;
 
 			//RETURN REQUEST VARIABLE: REGISTER PASSWORD
 			$rawPassword = $_POST[self::$registerPassword];
