@@ -53,6 +53,6 @@ class DataBaseModel {
         $user->addAttribute('username', $userName);
         $user->addAttribute('password', $password);
 
-        $xml->asXml('./database.xml');
+        $xml->asXml("./database.xml");
     }
 }
