@@ -45,26 +45,6 @@ class UserController {
             }
         
         } 
-
-        //THE USER HAS PUT USERNAME AND PASSWORD
-        if ($this->loginView->userWantsToLoginWithCookies()) {
-
-            // SHOULD RETURN A MODEL OBJECT (USER)
-            $this->user = $this->loginView->getCookies();
-
-            // AUTHENTICATE USER
-            if ($this->dataBase->userExists($this->user)) {
-                // $this->userStorage->saveUser($this->user);
-                $this->loginView->setMessage('Welcome back with cookie');
-                $this->authenticated = true;
-            
-            } else {
-                $this->loginView->setMessage('Wrong name or password');
-                $this->authenticated = false;
-            }
-        
-        } 
-
         if ($this->loginView->userWantsToLogout()) {
             if (!$this->userStorage->isSet()) {
                 $this->loginView->setMessage('');
@@ -84,6 +64,7 @@ class UserController {
         if ($this->loginView->userWantsToRegister()) {
             // echo "user wants to register";   
         }
+
 
         $this->layoutView->render($this->authenticated, $this->loginView, $this->dateTimeView);
     }
