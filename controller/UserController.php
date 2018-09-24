@@ -82,7 +82,9 @@ class UserController {
             $this->authenticated = true;
         }
         if ($this->loginView->userWantsToRegister()) {
-            // echo "user wants to register";   
+            // SHOULD RETURN A MODEL OBJECT (USER)
+            $this->user = $this->loginView->getRegisteredUser();
+            $this->dataBase->addUser($this->user);
         }
 
         $this->layoutView->render($this->authenticated, $this->loginView, $this->dateTimeView);

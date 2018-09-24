@@ -39,8 +39,20 @@ class DataBaseModel {
             }
         }
 
-
-
         return false;
+    }
+
+    public function addUser(UserModel $user) {
+
+        $userName = $user->getUsername();
+        $password = $user->getPassword();
+
+        $xml = simplexml_load_file("./database.xml");
+
+        $user = $xml->addChild('user');
+        $user->addAttribute('username', $userName);
+        $user->addAttribute('password', $password);
+
+        $xml->asXml('./database.xml');
     }
 }

@@ -183,16 +183,17 @@ class LoginView {
 	public function userWantsToRegister() : bool {
 
 		if (isset($_POST[self::$register])) {
+
 			//RETURN REQUEST VARIABLE: REGISTER USERNAME
 			$rawUsername = $_POST[self::$registerName];
 			$filteredUsername = trim($rawUsername);
 
-			// SET SAVED REGISTER NAME
-			self::$savedRegisterName = $filteredUsername;
-
 			//RETURN REQUEST VARIABLE: REGISTER PASSWORD
 			$rawPassword = $_POST[self::$registerPassword];
 			$filteredPassword = trim($rawPassword);
+
+			// SET SAVED REGISTER NAME
+			self::$savedRegisterName = $filteredUsername;
 
 			if (strlen($filteredUsername) > 3 && strlen($filteredPassword) > 6) {
 				return true;
@@ -201,6 +202,24 @@ class LoginView {
 		}
 
 		return false;
+	}
+
+	public function getRegisteredUser() : UserModel  {
+		$user = new UserModel();
+		//RETURN REQUEST VARIABLE: REGISTER USERNAME
+		$rawUsername = $_POST[self::$registerName];
+		$filteredUsername = trim($rawUsername);
+
+		//RETURN REQUEST VARIABLE: REGISTER PASSWORD
+		$rawPassword = $_POST[self::$registerPassword];
+		$filteredPassword = trim($rawPassword);
+
+		$user->setUsername($filteredUsername);
+		$user->setPassword($filteredPassword);
+		
+
+		//RETURNS USERMODEL OBJECT
+		return $user;
 	}
 	
 	//CREATE GET-FUNCTIONS TO FETCH REQUEST VARIABLES
