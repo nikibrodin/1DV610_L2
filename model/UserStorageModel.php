@@ -8,7 +8,6 @@ class UserStorageModel {
 
     public function isSet() {
 		if (isset($_SESSION[self::$SESSION_KEY])) {
-            // echo "It is set.";
 			return true;
 		} else {
 			return false;
@@ -17,7 +16,6 @@ class UserStorageModel {
 
     public function saveUser(UserModel $user) {
         $_SESSION[self::$SESSION_KEY] = $user;
-        // echo "User saved";
     }
 
     public function getSessID() {

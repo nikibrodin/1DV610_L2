@@ -21,10 +21,7 @@ $dataBase = new DataBaseModel(); //NEW
 $userStorage = new UserStorageModel(); //NEW
 $userController = new UserController($loginView, $dataBase, $userStorage, $layoutView, $dateTimeView); //NEW
 
-// Controller authenticates user.
 $userController->authentication();
-//False -> not logged in.
-// $layoutView->render($authenticated, $loginView, $dateTimeView);
 
 
 

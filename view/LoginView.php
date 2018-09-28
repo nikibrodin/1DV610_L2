@@ -1,7 +1,5 @@
 <?php
 
-// require_once('model/UserStorageModel.php'); //NEW
-
 class LoginView {
 	private static $login = 'LoginView::Login';
 	private static $logout = 'LoginView::Logout';
@@ -28,29 +26,12 @@ class LoginView {
 			$this->response = $this->generateLoginFormHTML($this->message);
 		}
 
-		// USER STORAGE MODEL DEPENDENCY
+		// MODEL DEPENDENCY
 		$userStorage = new UserStorageModel();
 
-		/*if (isset($_POST[self::$logout])){
-
-			$this->response = $this->generateLoginFormHTML($this->message);
-
-		} */
 		if ($userStorage->isSet()) {
 			$this->response = $this->generateLogoutButtonHTML($this->message);
 		}
-
-		// ---------------------------------THIS IS THE PROBLEM---------------------------------DO NOT HARD CORE USE SELF::$REGISTER
-		/*if (isset($_GET['register'])) {
-			echo "get register";
-			$this->message = '';
-			$this->response = $this->generateRegisterFormHTML($this->message);
-		}*/
-		
-		//if ($this->isLoggedIn()) {
-		//	$this->message = 'Welcome back with cookie';
-		//	$this->response = $this->generateLogoutButtonHTML($this->message);
-		//}
 		
 		return $this->response;
 	}
@@ -125,14 +106,8 @@ class LoginView {
 		';
 	}
 
-	// SET FLASH MESSAGE
-	public function setMessage($message) {
-		$this->message = $message;
-	}
-
-	//CHECKS IF USERNAME AND PASSWORD IS SET.
 	public function userWantsToLogin() : bool {
-		// USER STORAGE MODEL DEPENDENCY
+		// MODEL DEPENDENCY
 		$userStorage = new UserStorageModel();
 		$dataBase = new DataBaseModel();
 		$user = new UserModel();
@@ -144,6 +119,7 @@ class LoginView {
 			$bool = true;
 			$user->setUsername(trim($_POST[self::$name]));
 			$user->setPassword(trim($_POST[self::$password]));
+
 			// SET SAVED NAME
 			self::$savedName = trim($_POST[self::$name]);
 
@@ -194,6 +170,7 @@ class LoginView {
 
 		$this->message = 'Welcome';
 		$this->response = $this->generateLogoutButtonHTML($this->message);
+	
 		//RETURNS USERMODEL OBJECT
 		return $user;
 	}
@@ -204,10 +181,8 @@ class LoginView {
 		// SHOULD RETURN A MODEL OBJECT (USER)
 		if (isset($_COOKIE[self::$cookieName])) {
 			$this->user = $this->getCookies();
-			// echo "with cookie 1";
 			// AUTHENTICATE USER
 			if ($dataBase->userExists($this->user)) {
-				//echo "with cookie 2";
 				$this->message = 'Welcome back with cookie';
 				$this->response = $this->generateLogoutButtonHTML($this->message);
 				$bool = true;
@@ -238,7 +213,6 @@ class LoginView {
 	}
 
 	public function displayRegisterForm() {
-		// echo "display register";
 		$this->message = '';
 		$this->response = $this->generateRegisterFormHTML($this->message);
 	}
@@ -263,10 +237,8 @@ class LoginView {
 				$bool = false;
 			}
 
-			//SET USERNAME
-			$rawUsername = $_POST[self::$registerName];
-			$filteredUsername = trim($rawUsername);
-			self::$savedRegisterName = $filteredUsername;
+			//SET SAVED USERNAME
+			self::$savedRegisterName = trim($_POST[self::$registerName]);
 
 			$this->response = $this->generateRegisterFormHTML($this->message);
 
@@ -294,15 +266,7 @@ class LoginView {
 
 		//RETURNS USERMODEL OBJECT
 		return $user;
-	}
-
-	// Probably unneccessary. 
-	public function backToLogin() {
-		$this->message = "";
-		$this->response = $this->generateLoginFormHTML($this->message);
-	}
-	
-	
+	}	
 
 	private function getCookies() : UserModel {
 		$user = new UserModel();
@@ -346,7 +310,6 @@ class LoginView {
 	// SET COOKIE
     public function setCookieName($name) {
 		setcookie(self::$cookieName, $name);
-		// $_COOKIE[self::$cookieName] = $name;
 	}
 	
 	// GET COOKIE PASSWORD
@@ -361,7 +324,6 @@ class LoginView {
 	// SET COOKIE
     public function setCookiePassword($password) {
 		setcookie(self::$cookiePassword, $password);
-		// $_COOKIE[self::$cookiePassword] = $password;
 	}
 	
 }

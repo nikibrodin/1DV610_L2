@@ -29,7 +29,6 @@ class DataBaseModel {
 
     public function userExists(UserModel $user) : bool {
         $userName = $user->getUsername();
-        //$password = $user->getPassword();
 
         $xml = simplexml_load_file("./database.xml");
 

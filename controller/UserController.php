@@ -55,7 +55,6 @@ class UserController {
             // SHOULD RETURN A MODEL OBJECT (USER)
             $this->user = $this->loginView->getRegisteredUser();
             $this->dataBase->addUser($this->user);
-            //$this->loginView->backToLogin();
         }
 
         $this->layoutView->render($this->authenticated, $this->loginView, $this->dateTimeView);
