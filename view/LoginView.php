@@ -163,12 +163,12 @@ class LoginView {
 			}
 			
 			$this->response = $this->generateLoginFormHTML($this->message);
-			
-			if ($userStorage->isSet()) {
+
+			/*if ($userStorage->isSet()) {
 				$this->message = '';
 				$this->response = $this->generateLogoutButtonHTML($this->message);
 				$bool = false;
-			}
+			}*/
 
 		}
 
