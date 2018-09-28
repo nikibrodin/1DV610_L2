@@ -31,58 +31,23 @@ class LoginView {
 		// USER STORAGE MODEL DEPENDENCY
 		$userStorage = new UserStorageModel();
 
-		// IF LOGIN
-		if (isset($_POST[self::$login])) {
-
-			if (isset($_POST[self::$password]) && isset($_POST[self::$name])) {
-				$this->response = $this->generateLoginFormHTML($this->message);
-			}
-			   
-			if (isset($_POST[self::$password]) && $_POST[self::$password] == "") {
-				$this->message = 'Password is missing';
-				$this->response = $this->generateLoginFormHTML($this->message);
-			   }
-	
-			if (isset($_POST[self::$name]) && $_POST[self::$name] == "") {
-			   $this->message = 'Username is missing';
-			   $this->response = $this->generateLoginFormHTML($this->message);
-			}
-
-			if ($userStorage->isSet()) {
-				$this->response = $this->generateLogoutButtonHTML($this->message);
-			}
-
-			if ($this->isLoggedIn()) {
-				$this->message = 'Welcome back with cookie';
-				$this->response = $this->generateLogoutButtonHTML($this->message);
-			}
-		} else if (isset($_POST[self::$logout])){
+		if (isset($_POST[self::$logout])){
 
 			$this->response = $this->generateLoginFormHTML($this->message);
 
-		} else if ($userStorage->isSet()) {
+		} 
+		/*if ($userStorage->isSet()) {
 			$this->message = '';
 			$this->response = $this->generateLogoutButtonHTML($this->message);
-		}
-		if (isset($_GET['register'])) {
+		}*/
+
+		// ---------------------------------THIS IS THE PROBLEM---------------------------------DO NOT HARD CORE USE SELF::$REGISTER
+		/*if (isset($_GET['register'])) {
+			echo "get register";
 			$this->message = '';
 			$this->response = $this->generateRegisterFormHTML($this->message);
-		}
-		if (isset($_POST[self::$register])) {
-			if (strlen($_POST[self::$registerName]) < 4) {
-				$this->message = 'Username has too few characters, at least 3 characters.<br>';
-			}
-	
-			if (strlen($_POST[self::$registerPassword]) < 7) {
-				$this->message .= 'Password has too few characters, at least 6 characters.<br>';
-			}
-
-			if ($_POST[self::$registerPassword] != $_POST[self::$registerPasswordRepeat]) {
-				$this->message .= 'Passwords do not match.<br>';
-			}
-
-		 	$this->response = $this->generateRegisterFormHTML($this->message);
-		}
+		}*/
+		
 		//if ($this->isLoggedIn()) {
 		//	$this->message = 'Welcome back with cookie';
 		//	$this->response = $this->generateLogoutButtonHTML($this->message);
@@ -168,37 +133,143 @@ class LoginView {
 
 	//CHECKS IF USERNAME AND PASSWORD IS SET.
 	public function userWantsToLogin() : bool {
-		return isset($_POST[self::$name]) && isset($_POST[self::$password]);
+		// USER STORAGE MODEL DEPENDENCY
+		$userStorage = new UserStorageModel();
+		$dataBase = new DataBaseModel();
+		$user = new UserModel();
+		
+		$bool = false;
+
+		// IF LOGIN
+		if (isset($_POST[self::$login])) {
+			$bool = true;
+			$user->setUsername(trim($_POST[self::$name]));
+			$user->setPassword(trim($_POST[self::$password]));
+			// SET SAVED NAME
+			self::$savedName = trim($_POST[self::$name]);
+
+			if (!$dataBase->isAuthenticated($user)) {
+				$this->message = 'Wrong name or password';
+				$bool = false;
+			}
+			if (isset($_POST[self::$password]) && $_POST[self::$password] == "") {
+				$this->message = 'Password is missing';
+				$bool = false;
+			}
+	
+			if (isset($_POST[self::$name]) && $_POST[self::$name] == "") {
+			   $this->message = 'Username is missing';
+			   $bool = false;
+			}
+
+		}
+
+		$this->response = $this->generateLoginFormHTML($this->message);
+
+		if ($userStorage->isSet()) {
+			$this->message = '';
+			$this->response = $this->generateLogoutButtonHTML($this->message);
+			$bool = false;
+		}
+
+
+		return $bool;
+	}
+
+	//CREATE GET-FUNCTIONS TO FETCH REQUEST VARIABLES
+	public function getRequestUserName() : UserModel {
+		
+		$user = new UserModel();
+		
+		//RETURN REQUEST VARIABLE: USERNAME
+		$rawUsername = $_POST[self::$name];
+		$filteredUsername = trim($rawUsername);
+
+		//RETURN REQUEST VARIABLE: PASSWORD
+		$rawPassword = $_POST[self::$password];
+		$filteredPassword = trim($rawPassword);
+
+		
+		$user->setUsername($filteredUsername);
+		$user->setPassword($filteredPassword);
+
+		$this->message = 'Welcome';
+		$this->response = $this->generateLogoutButtonHTML($this->message);
+		//RETURNS USERMODEL OBJECT
+		return $user;
 	}
 
 	public function userWantsToLoginWithCookies() : bool {
-		return isset($_COOKIE[self::$cookieName]);
+		$dataBase = new DataBaseModel();
+		$bool = false;
+		// SHOULD RETURN A MODEL OBJECT (USER)
+		if (isset($_COOKIE[self::$cookieName])) {
+			$this->user = $this->getCookies();
+			
+			// AUTHENTICATE USER
+			if ($dataBase->userExists($this->user)) {
+				$this->message = 'Welcome back with cookie';
+				$bool = true;
+			} else {
+				$this->message = 'Wrong name or password';
+				$bool = false;
+			}
+		}
+		return $bool;
 	}
 
 	//CHECKS IF WANT TO LOGOUT.
 	public function userWantsToLogout() : bool {
-		return isset($_POST[self::$logout]);	
+		$userStorage = new UserStorageModel();
+		$bool = false;
+		if (isset($_POST[self::$logout])) {
+			$bool = true;
+			$this->message = 'Bye bye!';
+			if (!$userStorage->isSet()) {
+				$this->message = '';
+			}
+		}
+		return $bool;	
+	}
+
+	public function userWantsRegisterForm() {
+		return isset($_GET['register']);
+	}
+
+	public function displayRegisterForm() {
+		echo "display register";
+		$this->message = '';
+		$this->response = $this->generateRegisterFormHTML($this->message);
 	}
 
 	public function userWantsToRegister() : bool {
 
 		if (isset($_POST[self::$register])) {
+			$bool = true;
 
-			//RETURN REQUEST VARIABLE: REGISTER USERNAME
+			if (strlen($_POST[self::$registerName]) < 4) {
+				$this->message = 'Username has too few characters, at least 3 characters.<br>';
+				$bool = false;
+			}
+	
+			if (strlen($_POST[self::$registerPassword]) < 6) {
+				$this->message .= 'Password has too few characters, at least 6 characters.<br>';
+				$bool = false;
+			}
+	
+			if ($_POST[self::$registerPassword] != $_POST[self::$registerPasswordRepeat]) {
+				$this->message .= 'Passwords do not match.<br>';
+				$bool = false;
+			}
+
+			//SET USERNAME
 			$rawUsername = $_POST[self::$registerName];
 			$filteredUsername = trim($rawUsername);
-
-			//RETURN REQUEST VARIABLE: REGISTER PASSWORD
-			$rawPassword = $_POST[self::$registerPassword];
-			$filteredPassword = trim($rawPassword);
-
-			// SET SAVED REGISTER NAME
 			self::$savedRegisterName = $filteredUsername;
 
-			if (strlen($filteredUsername) > 3 && strlen($filteredPassword) > 6) {
-				return true;
-			}
-			return false;
+			// $this->response = $this->generateRegisterFormHTML($this->message);
+
+			return $bool;
 		}
 
 		return false;
@@ -206,7 +277,7 @@ class LoginView {
 
 	public function getRegisteredUser() : UserModel  {
 		$user = new UserModel();
-		//RETURN REQUEST VARIABLE: REGISTER USERNAME
+
 		$rawUsername = $_POST[self::$registerName];
 		$filteredUsername = trim($rawUsername);
 
@@ -216,39 +287,23 @@ class LoginView {
 
 		$user->setUsername($filteredUsername);
 		$user->setPassword($filteredPassword);
-		
+
+		$this->message = '';
+		$this->response = $this->generateLoginFormHTML($this->message);
 
 		//RETURNS USERMODEL OBJECT
 		return $user;
+	}
+
+	// Probably unneccessary. 
+	public function backToLogin() {
+		$this->message = "";
+		$this->response = $this->generateLoginFormHTML($this->message);
 	}
 	
-	//CREATE GET-FUNCTIONS TO FETCH REQUEST VARIABLES
-	public function getRequestUserName() : UserModel {
+	
 
-		$user = new UserModel();
-		
-		//RETURN REQUEST VARIABLE: USERNAME
-		$rawUsername = $_POST[self::$name];
-		$filteredUsername = trim($rawUsername);
-
-		// SET SAVED NAME
-		self::$savedName = $filteredUsername;
-
-
-		//RETURN REQUEST VARIABLE: PASSWORD
-		$rawPassword = $_POST[self::$password];
-		$filteredPassword = trim($rawPassword);
-
-		
-		$user->setUsername($filteredUsername);
-		$user->setPassword($filteredPassword);
-		
-
-		//RETURNS USERMODEL OBJECT
-		return $user;
-	}
-
-	public function getCookies() : UserModel {
+	private function getCookies() : UserModel {
 		$user = new UserModel();
 		if (isset($_COOKIE[self::$cookieName])) {
 			$user->setUsername($_COOKIE[self::$cookieName]);
@@ -260,35 +315,9 @@ class LoginView {
 
 	}
 
-	//CREATE GET-FUNCTIONS TO FETCH REQUEST VARIABLES
-	public function getNewUser() : UserModel {
-
-		//RETURN REQUEST VARIABLE: USERNAME
-		$rawUsername = $_POST[self::$name];
-		$filteredUsername = trim($rawUsername);
-
-		// SET SAVED NAME
-		self::$savedName = $filteredUsername;
-
-		//RETURN REQUEST VARIABLE: PASSWORD
-		$rawPassword = $_POST[self::$password];
-		$filteredPassword = trim($rawPassword);
-
-		$user = new UserModel();
-		$user->setUsername($filteredUsername);
-		$user->setPassword($filteredPassword);
-
-		//RETURNS USERMODEL OBJECT
-		return $user;
-	}
-
 	//CHECKS IF USER WANTS TO KEEP BEING LOGGED IN.
 	public function keepLoggedIn() : bool {
 		return isset($_POST[self::$keep]);
-	}
-
-	public function isLoggedIn() : bool {
-		return isset($_COOKIE[self::$cookieName]);
 	}
 	
 	//SET COOKIES

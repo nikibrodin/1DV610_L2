@@ -26,65 +26,36 @@ class UserController {
             // SHOULD RETURN A MODEL OBJECT (USER)
             $this->user = $this->loginView->getRequestUserName();
 
-            // AUTHENTICATE USER
-            if ($this->dataBase->isAuthenticated($this->user)) {
-                if ($this->userStorage->isSet()) {
-                    $this->loginView->setMessage('');
-                    $this->authenticated = true;
-                } else {
-                    $this->userStorage->saveUser($this->user);
-                    $this->loginView->setMessage('Welcome');
-                    if ($this->loginView->keepLoggedIn()) {
-                        $this->loginView->setCookies($this->user);
-                    }
-                    $this->authenticated = true;
-                }
-            } else {
-                $this->loginView->setMessage('Wrong name or password');
-                $this->authenticated = false;
+            // SAVE USER
+            $this->userStorage->saveUser($this->user);
+            if ($this->loginView->keepLoggedIn()) {
+                $this->loginView->setCookies($this->user);
             }
-        
-        } 
+            $this->authenticated = true;
+        }
 
         //THE USER HAS COOKIES
         if ($this->loginView->userWantsToLoginWithCookies()) {
-
-            // SHOULD RETURN A MODEL OBJECT (USER)
-            $this->user = $this->loginView->getCookies();
-
-            // AUTHENTICATE USER
-            if ($this->dataBase->userExists($this->user)) {
-                // $this->userStorage->saveUser($this->user);
-                $this->loginView->setMessage('Welcome back with cookie');
-                $this->authenticated = true;
-            
-            } else {
-                $this->loginView->setMessage('Wrong name or password');
-                $this->authenticated = false;
-            }
-        
+            $this->authenticated = true;
         } 
 
         if ($this->loginView->userWantsToLogout()) {
-            if (!$this->userStorage->isSet()) {
-                $this->loginView->setMessage('');
-                $this->authenticated = false;
-            } else {
-                $this->loginView->setMessage('Bye bye!');
-                $this->loginView->removeCookies();
-                $this->userStorage->clear();
-                $this->authenticated = false;
-            }
-            
+            $this->loginView->removeCookies();
+            $this->userStorage->clear();
         } 
         // IF SESSION
         if ($this->userStorage->isSet()) {
             $this->authenticated = true;
         }
+        if ($this->loginView->userWantsRegisterForm()) {
+            $this->loginView->displayRegisterForm();
+        }
+
         if ($this->loginView->userWantsToRegister()) {
             // SHOULD RETURN A MODEL OBJECT (USER)
             $this->user = $this->loginView->getRegisteredUser();
             $this->dataBase->addUser($this->user);
+            //$this->loginView->backToLogin();
         }
 
         $this->layoutView->render($this->authenticated, $this->loginView, $this->dateTimeView);
