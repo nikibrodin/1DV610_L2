@@ -31,15 +31,14 @@ class LoginView {
 		// USER STORAGE MODEL DEPENDENCY
 		$userStorage = new UserStorageModel();
 
-		if (isset($_POST[self::$logout])){
+		/*if (isset($_POST[self::$logout])){
 
 			$this->response = $this->generateLoginFormHTML($this->message);
 
-		} 
-		/*if ($userStorage->isSet()) {
-			$this->message = '';
+		} */
+		if ($userStorage->isSet()) {
 			$this->response = $this->generateLogoutButtonHTML($this->message);
-		}*/
+		}
 
 		// ---------------------------------THIS IS THE PROBLEM---------------------------------DO NOT HARD CORE USE SELF::$REGISTER
 		/*if (isset($_GET['register'])) {
