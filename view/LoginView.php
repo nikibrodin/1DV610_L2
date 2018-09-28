@@ -205,10 +205,10 @@ class LoginView {
 		// SHOULD RETURN A MODEL OBJECT (USER)
 		if (isset($_COOKIE[self::$cookieName])) {
 			$this->user = $this->getCookies();
-			echo "with cookie 1";
+			// echo "with cookie 1";
 			// AUTHENTICATE USER
 			if ($dataBase->userExists($this->user)) {
-				echo "with cookie 2";
+				//echo "with cookie 2";
 				$this->message = 'Welcome back with cookie';
 				$bool = true;
 			} else {
@@ -238,7 +238,7 @@ class LoginView {
 	}
 
 	public function displayRegisterForm() {
-		echo "display register";
+		// echo "display register";
 		$this->message = '';
 		$this->response = $this->generateRegisterFormHTML($this->message);
 	}
