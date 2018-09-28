@@ -269,7 +269,7 @@ class LoginView {
 			$filteredUsername = trim($rawUsername);
 			self::$savedRegisterName = $filteredUsername;
 
-			// $this->response = $this->generateRegisterFormHTML($this->message);
+			$this->response = $this->generateRegisterFormHTML($this->message);
 
 			return $bool;
 		}
