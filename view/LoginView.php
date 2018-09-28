@@ -36,10 +36,10 @@ class LoginView {
 			$this->response = $this->generateLoginFormHTML($this->message);
 
 		} 
-		/*if ($userStorage->isSet()) {
+		if ($userStorage->isSet()) {
 			$this->message = '';
 			$this->response = $this->generateLogoutButtonHTML($this->message);
-		}*/
+		}
 
 		// ---------------------------------THIS IS THE PROBLEM---------------------------------DO NOT HARD CORE USE SELF::$REGISTER
 		/*if (isset($_GET['register'])) {
