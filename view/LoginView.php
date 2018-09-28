@@ -36,10 +36,10 @@ class LoginView {
 			$this->response = $this->generateLoginFormHTML($this->message);
 
 		} 
-		if ($userStorage->isSet()) {
+		/*if ($userStorage->isSet()) {
 			$this->message = '';
 			$this->response = $this->generateLogoutButtonHTML($this->message);
-		}
+		}*/
 
 		// ---------------------------------THIS IS THE PROBLEM---------------------------------DO NOT HARD CORE USE SELF::$REGISTER
 		/*if (isset($_GET['register'])) {
@@ -164,11 +164,11 @@ class LoginView {
 			
 			$this->response = $this->generateLoginFormHTML($this->message);
 
-			/*if ($userStorage->isSet()) {
+			if ($userStorage->isSet()) {
 				$this->message = '';
 				$this->response = $this->generateLogoutButtonHTML($this->message);
 				$bool = false;
-			}*/
+			}
 
 		}
 
@@ -210,6 +210,7 @@ class LoginView {
 			if ($dataBase->userExists($this->user)) {
 				//echo "with cookie 2";
 				$this->message = 'Welcome back with cookie';
+				$this->response = $this->generateLogoutButtonHTML($this->message);
 				$bool = true;
 			} else {
 				$this->message = 'Wrong information in cookies';
