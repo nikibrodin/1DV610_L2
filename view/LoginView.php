@@ -161,17 +161,16 @@ class LoginView {
 			   $this->message = 'Username is missing';
 			   $bool = false;
 			}
+			
+			$this->response = $this->generateLoginFormHTML($this->message);
+			
+			if ($userStorage->isSet()) {
+				$this->message = '';
+				$this->response = $this->generateLogoutButtonHTML($this->message);
+				$bool = false;
+			}
 
 		}
-
-		$this->response = $this->generateLoginFormHTML($this->message);
-
-		if ($userStorage->isSet()) {
-			$this->message = '';
-			$this->response = $this->generateLogoutButtonHTML($this->message);
-			$bool = false;
-		}
-
 
 		return $bool;
 	}
@@ -193,6 +192,7 @@ class LoginView {
 		$user->setUsername($filteredUsername);
 		$user->setPassword($filteredPassword);
 
+
 		$this->message = 'Welcome';
 		$this->response = $this->generateLogoutButtonHTML($this->message);
 		//RETURNS USERMODEL OBJECT
@@ -205,13 +205,14 @@ class LoginView {
 		// SHOULD RETURN A MODEL OBJECT (USER)
 		if (isset($_COOKIE[self::$cookieName])) {
 			$this->user = $this->getCookies();
-			
+			echo "with cookie 1";
 			// AUTHENTICATE USER
 			if ($dataBase->userExists($this->user)) {
+				echo "with cookie 2";
 				$this->message = 'Welcome back with cookie';
 				$bool = true;
 			} else {
-				$this->message = 'Wrong name or password';
+				$this->message = 'Wrong information in cookies';
 				$bool = false;
 			}
 		}
