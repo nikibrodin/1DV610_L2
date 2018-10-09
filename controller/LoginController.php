@@ -21,7 +21,6 @@ class LoginController {
             // SHOULD RETURN A MODEL OBJECT (USER)
             $this->user = $this->loginView->getRequestUserName();
 
-            // SAVE USER
             $this->userStorage->saveUser($this->user);
             if ($this->loginView->keepLoggedIn()) {
                 $this->loginView->setCookies($this->user);

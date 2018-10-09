@@ -11,7 +11,7 @@ class MasterController {
     private $reminderView;
 
     private $authenticated;
-    private $show;
+    private $showRegister;
 
     public function __construct (LoginController $loginController, RegisterController $registerController, ReminderController $reminderController, LayoutView $layoutView) {
         $this->loginController = $loginController;
@@ -26,17 +26,17 @@ class MasterController {
         
         $this->loginController->authentication();
         $this->LoginView = $this->loginController->getLoginView();
-        $this->show = $this->loginController->userWantsRegisterform();
+        if ($this->loginController->userWantsRegisterform()) { $this->showRegister = true; }
         $this->authenticated = $this->loginController->userIsAuthenticated();
 
         $this->registerController->registration();
         $this->registerView = $this->registerController->getRegisterView();
-        //$this->show = $this->registerController->userWantsLoginform();
+        if ($this->registerController->userWantsLoginform()) { $this->showRegister = false; }
 
         $this->reminderController->manageReminders();
         $this->reminderView = $this->reminderController->getReminderView();
     
     
-        $this->layoutView->render($this->authenticated, $this->show, $this->LoginView, $this->registerView, $this->reminderView);
+        $this->layoutView->render($this->authenticated, $this->showRegister, $this->LoginView, $this->registerView, $this->reminderView);
     }
 }

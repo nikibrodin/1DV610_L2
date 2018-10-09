@@ -8,8 +8,8 @@ class LayoutView {
     $this->dateTime = $dateTime;
   }
   
-  public function render($isLoggedIn, $showRegistration, LoginView $loginView, RegisterView $registerView, ReminderView $reminderView) {
-    if ($showRegistration) {
+  public function render($isLoggedIn, $showRegister, LoginView $loginView, RegisterView $registerView, ReminderView $reminderView) {
+    if ($showRegister) {
       $this->view = $registerView;
     } else {
       $this->view = $loginView;

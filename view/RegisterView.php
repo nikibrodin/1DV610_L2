@@ -55,6 +55,10 @@ class RegisterView extends View {
     }
 
 	public function userWantsToRegister() : bool {
+		return isset($_POST[self::$register]);
+    }
+    
+    public function validInformation() {
         $dataBase = new DataBaseModel();
 
 		if (isset($_POST[self::$register])) {
@@ -90,7 +94,7 @@ class RegisterView extends View {
 		}
 
 		return false;
-	}
+    }
 
 	public function getRegisteredUser() : UserModel  {
 		$user = new UserModel();
@@ -105,9 +109,8 @@ class RegisterView extends View {
 		$user->setUsername($filteredUsername);
 		$user->setPassword($filteredPassword);
 
-		$this->message = '';
-		$this->response = $this->generateLoginFormHTML($this->message);
-
+        header('Location: ?');
+        //exit;
 		//RETURNS USERMODEL OBJECT
 		return $user;
 	}	

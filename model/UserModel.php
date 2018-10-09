@@ -6,6 +6,7 @@ class UserModel {
     private $password;
 
     public function setUsername(string $newUserName)  {
+        
 		$this->username = $newUserName;
 	}
 

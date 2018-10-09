@@ -3,6 +3,8 @@
 class RegisterController {
     private $dataBase;
     private $registerView;
+    private $user;
+    private $validInformation;
 
     public function __construct (RegisterView $registerView, DataBaseModel $dataBase) {
         $this->registerView = $registerView;
@@ -10,16 +12,20 @@ class RegisterController {
     }
 
     public function registration() {
+        $this->validInformation = false;
 
         if ($this->registerView->userWantsToRegister()) {
             // SHOULD RETURN A MODEL OBJECT (USER)
-            $this->user = $this->registerView->getRegisteredUser();
-            $this->dataBase->addUser($this->user);
+            if ($this->registerView->validInformation()) {
+                $this->user = $this->registerView->getRegisteredUser();
+                $this->dataBase->addUser($this->user);
+                $this->validInformation = true;
+            }
         }
     }
 
     public function userWantsLoginForm() {
-        return $this->registerView->userWantsLoginForm();
+        if ($this->validInformation || $this->registerView->userWantsLoginForm()) { return true; }
     }
 
     public function getRegisterView() {
