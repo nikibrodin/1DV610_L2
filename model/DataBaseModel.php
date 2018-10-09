@@ -2,7 +2,7 @@
 
 class DataBaseModel {
 
-    private $myUsername = "Niki";
+    //private $myUsername = "Niki";
 
     //EMPTY CONSTRUCTOR, MAY NOT BE NEEDED.
     public function __construct () {

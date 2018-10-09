@@ -1,9 +1,20 @@
 <?php
 
-
 class LayoutView {
+  private $dateTime;
+  private $view;
+
+  public function __construct (DateTimeView $dateTime) {
+    $this->dateTime = $dateTime;
+  }
   
-  public function render($isLoggedIn, LoginView $v, DateTimeView $dtv) {
+  public function render($isLoggedIn, $showRegistration, LoginView $loginView, RegisterView $registerView, ReminderView $reminderView) {
+    if ($showRegistration) {
+      $this->view = $registerView;
+    } else {
+      $this->view = $loginView;
+    }
+
     echo '<!DOCTYPE html>
       <html>
         <head>
@@ -12,25 +23,26 @@ class LayoutView {
         </head>
         <body>
           <h1>Assignment 2</h1>
-          ' . $v->generateRegister() . '
-          ' . $this->renderIsLoggedIn($isLoggedIn) . '
+          ' . $this->renderIsLoggedIn($isLoggedIn, $this->view, $reminderView) . '
           
           <div class="container">
-              ' . $v->response() . '
+              ' . $this->view->response() . '
               
-              ' . $dtv->show() . '
+              ' . $this->dateTime->show() . '
           </div>
          </body>
       </html>
     ';
   }
   
-  private function renderIsLoggedIn($isLoggedIn) {
+  private function renderIsLoggedIn($isLoggedIn, $view, $reminderView) {
     if ($isLoggedIn) {
-      return '<h2>Logged in</h2>';
+      return '<h2>Logged in</h2>
+      ' . $reminderView->response() . '';
     }
     else {
-      return '<h2>Not logged in</h2>';
+      return '' . $view->generateRegister() . '
+      <h2>Not logged in</h2>';
     }
   }
 }
