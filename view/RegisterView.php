@@ -77,7 +77,7 @@ class RegisterView extends View {
             try {
                 $dataBase->usernameExists($_POST[self::$registerName]);
             } catch (Exception $e){
-                $this->message .= $e->getMessage();
+                $this->message .= 'User exists, pick another username.<br>';
                 $bool = false;
             }
 
