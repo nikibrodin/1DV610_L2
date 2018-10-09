@@ -54,4 +54,15 @@ class DataBaseModel {
 
         $xml->asXml("./database.xml");
     }
+
+    public function usernameExists(string $username) {
+
+        $xml = simplexml_load_file("./database.xml");
+
+        foreach($xml->children() as $child) {
+            if ($child["username"] == $username) {
+                throw new Exception("Username already exists");
+            }
+        }
+    }
 }

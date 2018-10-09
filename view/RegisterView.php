@@ -55,6 +55,7 @@ class RegisterView extends View {
     }
 
 	public function userWantsToRegister() : bool {
+        $dataBase = new DataBaseModel();
 
 		if (isset($_POST[self::$register])) {
 			$bool = true;
@@ -72,7 +73,13 @@ class RegisterView extends View {
 			if ($_POST[self::$registerPassword] != $_POST[self::$registerPasswordRepeat]) {
 				$this->message .= 'Passwords do not match.<br>';
 				$bool = false;
-			}
+            }
+            try {
+                $dataBase->usernameExists($_POST[self::$registerName]);
+            } catch (Exception $e){
+                $this->message .= $e->getMessage();
+                $bool = false;
+            }
 
 			//SET SAVED USERNAME
 			self::$savedRegisterName = trim($_POST[self::$registerName]);
