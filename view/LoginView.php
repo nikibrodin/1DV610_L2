@@ -77,8 +77,8 @@ class LoginView extends View {
 	public function userWantsToLogin() : bool {		
 		// IF LOGIN
 		if (isset($_POST[self::$login])) {
-			$name = trim($_POST[self::$name]);
-			self::$savedName = $name;
+			$username = trim($_POST[self::$name]);
+			self::$savedName = $username;
 			$password = trim($_POST[self::$password]);
 
 			try {
