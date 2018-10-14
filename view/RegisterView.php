@@ -6,11 +6,18 @@ class RegisterView extends View {
 	private static $registerName = 'RegisterView::UserName';
 	private static $registerPassword = 'RegisterView::Password';
 	private static $registerPasswordRepeat = 'RegisterView::PasswordRepeat';
-	private static $messageRegister = 'RegisterView::Message';
+    private static $messageRegister = 'RegisterView::Message';
+    
+    private $dataBase;
+    private $user;
 
 	private static $savedRegisterName = '';
 	private $message = '';
-	private $response;
+    private $response;
+    
+    public function __construct (DataBaseModel $dataBase) {
+		$this->dataBase = $dataBase;
+    }
 
 	public function response() {
 		$this->response = $this->generateRegisterFormHTML($this->message);
@@ -59,8 +66,6 @@ class RegisterView extends View {
     }
     
     public function validInformation() {
-        $dataBase = new DataBaseModel();
-
 		if (isset($_POST[self::$register])) {
 			$bool = true;
 
@@ -78,12 +83,10 @@ class RegisterView extends View {
 				$this->message .= 'Passwords do not match.<br>';
 				$bool = false;
             }
-            try {
-                $dataBase->usernameExists($_POST[self::$registerName]);
-            } catch (Exception $e){
-                $this->message .= 'User exists, pick another username.<br>';
+            if ($this->dataBase->usernameExists($_POST[self::$registerName])) {
+				$this->message .= 'User exists, pick another username.<br>';
                 $bool = false;
-            }
+			}
 
 			//SET SAVED USERNAME
 			self::$savedRegisterName = trim($_POST[self::$registerName]);
@@ -97,8 +100,6 @@ class RegisterView extends View {
     }
 
 	public function getRegisteredUser() : UserModel  {
-		$user = new UserModel();
-
 		$rawUsername = $_POST[self::$registerName];
 		$filteredUsername = trim($rawUsername);
 
@@ -106,13 +107,18 @@ class RegisterView extends View {
 		$rawPassword = $_POST[self::$registerPassword];
 		$filteredPassword = trim($rawPassword);
 
-		$user->setUsername($filteredUsername);
-		$user->setPassword($filteredPassword);
+		try {
+			$this->user = new UserModel($filteredUsername, $filteredPassword);
+		} catch (Exception $e) {
+			
+		}
+		
 
+        // REDIRECT TO MAIN PAGE
         header('Location: ?');
         //exit;
 		//RETURNS USERMODEL OBJECT
-		return $user;
+		return $this->user;
 	}	
 	
 }

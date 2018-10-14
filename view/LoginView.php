@@ -9,20 +9,27 @@ class LoginView extends View {
 	private static $cookiePassword = 'LoginView::CookiePassword';
 	private static $keep = 'LoginView::KeepMeLoggedIn';
 	private static $messageId = 'LoginView::Message';
+	private static $registerLink = 'register';
+
+	private $userStorage;
+	private $dataBase;
+	private $user;
 
 	private static $savedName = '';
 	private $message = '';
 	private $response;
+
+	public function __construct (UserStorageModel $userStorage, DataBaseModel $dataBase) {
+		$this->userStorage = $userStorage;
+		$this->dataBase = $dataBase;
+    }
 
 	public function response() {
 		if (empty($this->response)) {
 			$this->response = $this->generateLoginFormHTML($this->message);
 		}
 
-		// MODEL DEPENDENCY
-		$userStorage = new UserStorageModel();
-
-		if ($userStorage->isSet()) {
+		if ($this->userStorage->isSet()) {
 			$this->response = $this->generateLogoutButtonHTML($this->message);
 		}
 		
@@ -32,7 +39,7 @@ class LoginView extends View {
 	public function generateRegister() {
 
 		return '
-			<a href="?register">Register a new user</a>
+			<a href="?' . self::$registerLink . '">Register a new user</a>
 		';
 	}
 
@@ -67,83 +74,61 @@ class LoginView extends View {
 		';
 	}
 
-	public function userWantsToLogin() : bool {
-		// MODEL DEPENDENCY
-		$userStorage = new UserStorageModel();
-		$dataBase = new DataBaseModel();
-		$user = new UserModel();
-		
-		$bool = false;
-
+	public function userWantsToLogin() : bool {		
 		// IF LOGIN
 		if (isset($_POST[self::$login])) {
-			$bool = true;
-			$user->setUsername(trim($_POST[self::$name]));
-			$user->setPassword(trim($_POST[self::$password]));
+			$name = trim($_POST[self::$name]);
+			self::$savedName = $name;
+			$password = trim($_POST[self::$password]);
 
-			// SET SAVED NAME
-			self::$savedName = trim($_POST[self::$name]);
+			try {
+				$this->user = new UserModel($name, $password);
+			} catch (Exception $e) {
+				if (empty($password)) {
+					$this->message = 'Password is missing';
+					return false;
+				}
+		
+				if (empty($username)) {
+				   $this->message = 'Username is missing';
+				   return false;
+				}
+			}
 
-			if (!$dataBase->isAuthenticated($user)) {
+			if (!$this->dataBase->isAuthenticated($this->user)) {
 				$this->message = 'Wrong name or password';
-				$bool = false;
+				return false;
 			}
-			if (isset($_POST[self::$password]) && $_POST[self::$password] == "") {
-				$this->message = 'Password is missing';
-				$bool = false;
-			}
-	
-			if (isset($_POST[self::$name]) && $_POST[self::$name] == "") {
-			   $this->message = 'Username is missing';
-			   $bool = false;
-			}
-			
+
 			$this->response = $this->generateLoginFormHTML($this->message);
 
-			if ($userStorage->isSet()) {
+			if ($this->userStorage->isSet()) {
 				$this->message = '';
 				$this->response = $this->generateLogoutButtonHTML($this->message);
-				$bool = false;
+				return false;
 			}
-
+			return true;
 		}
-
-		return $bool;
+		return false;
 	}
 
 	//CREATE GET-FUNCTIONS TO FETCH REQUEST VARIABLES
 	public function getRequestUserName() : UserModel {
-		
-		$user = new UserModel();
-		
-		//RETURN REQUEST VARIABLE: USERNAME
-		$rawUsername = $_POST[self::$name];
-		$filteredUsername = trim($rawUsername);
-
-		//RETURN REQUEST VARIABLE: PASSWORD
-		$rawPassword = $_POST[self::$password];
-		$filteredPassword = trim($rawPassword);
-
-		
-		$user->setUsername($filteredUsername);
-		$user->setPassword($filteredPassword);
-
 
 		$this->message = 'Welcome';
 		$this->response = $this->generateLogoutButtonHTML($this->message);
 	
 		//RETURNS USERMODEL OBJECT
-		return $user;
+		return $this->user;
 	}
 
 	public function userWantsToLoginWithCookies() : bool {
-		$dataBase = new DataBaseModel();
 		$bool = false;
 		// SHOULD RETURN A MODEL OBJECT (USER)
 		if (isset($_COOKIE[self::$cookieName])) {
 			$this->user = $this->getCookies();
 			// AUTHENTICATE USER
-			if ($dataBase->userExists($this->user)) {
+			if ($this->dataBase->userExists($this->user)) {
 				$this->message = 'Welcome back with cookie';
 				$this->response = $this->generateLogoutButtonHTML($this->message);
 				$bool = true;
@@ -157,12 +142,11 @@ class LoginView extends View {
 
 	//CHECKS IF WANT TO LOGOUT.
 	public function userWantsToLogout() : bool {
-		$userStorage = new UserStorageModel();
 		$bool = false;
 		if (isset($_POST[self::$logout])) {
 			$bool = true;
 			$this->message = 'Bye bye!';
-			if (!$userStorage->isSet()) {
+			if (!$this->userStorage->isSet()) {
 				$this->message = '';
 			}
 		}
@@ -170,18 +154,14 @@ class LoginView extends View {
 	}
 
 	public function userWantsRegisterForm() {
-		return isset($_GET['register']);
+		return isset($_GET[self::$registerLink]);
 	}
 
 	private function getCookies() : UserModel {
-		$user = new UserModel();
 		if (isset($_COOKIE[self::$cookieName])) {
-			$user->setUsername($_COOKIE[self::$cookieName]);
+			$this->user = new UserModel($_COOKIE[self::$cookieName], $_COOKIE[self::$cookiePassword]);
 		}
-		if (isset($_COOKIE[self::$cookiePassword])) {
-			$user->setPassword($_COOKIE[self::$cookiePassword]);
-		}
-		return $user;
+		return $this->user;
 
 	}
 

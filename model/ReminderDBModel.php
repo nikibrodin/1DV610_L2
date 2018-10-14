@@ -2,22 +2,20 @@
 
 class ReminderDBModel {
 
-    //private $myUsername = "Niki";
+    private static $path = "./reminders.xml";
+    private static $reminder = "reminder";
+    private static $text = "text";
 
-    //EMPTY CONSTRUCTOR, MAY NOT BE NEEDED.
-    public function __construct () {
-
-    }
 
     //SHOULD IMPLEMENT A DATABASE.
     public function getAllReminders() : array {
 
         $reminders = array();
 
-        $xml = simplexml_load_file("./reminders.xml");
+        $xml = simplexml_load_file(self::$path);
 
         foreach($xml->children() as $child) {
-            array_push($reminders, $child["text"]);
+            array_push($reminders, $child[self::$text]);
         }
 
         return $reminders;
@@ -29,11 +27,11 @@ class ReminderDBModel {
 
         $reminder = $reminderModel->getReminder();
 
-        $xml = simplexml_load_file("./reminders.xml");
+        $xml = simplexml_load_file(self::$path);
 
-        $user = $xml->addChild('reminder');
-        $user->addAttribute('text', $reminder);
+        $user = $xml->addChild(self::$reminder);
+        $user->addAttribute(self::$text, $reminder);
 
-        $xml->asXml("./reminders.xml");
+        $xml->asXml(self::$path);
     }
 }

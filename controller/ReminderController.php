@@ -14,12 +14,18 @@ class ReminderController {
 
     public function manageReminders() {
 
-        if ($this->reminderView->userWantsCreateForm()) {}
+        if ($this->reminderView->userWantsCreateForm()) {
+            $this->reminderView->displayCreateForm();
+        }
             
         if ($this->reminderView->userWantsToCreateReminder()) {
+
             $this->reminder = $this->reminderView->getReminder();
             $this->reminderDBModel->createReminder($this->reminder);
-                
+        }
+        
+        if ($this->reminderView->userWantsToViewReminders()) {
+            $this->reminderView->displayReminderList();
         }
     }
 

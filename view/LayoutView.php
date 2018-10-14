@@ -16,13 +16,14 @@ class LayoutView {
     }
 
     echo '<!DOCTYPE html>
-      <html>
+      <html lang="en">
         <head>
           <meta charset="utf-8">
           <title>Login Example</title>
+          <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
         </head>
-        <body>
-          <h1>Assignment 2</h1>
+        <body class="container">
+          <h1 class="header">Assignment 2</h1>
           ' . $this->renderIsLoggedIn($isLoggedIn, $this->view, $reminderView) . '
           
           <div class="container">

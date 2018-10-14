@@ -7,37 +7,41 @@ class ReminderView {
 	private static $update = 'ReminderView::Update';
 	private static $delete = 'ReminderView::Delete';
 	private static $form = 'ReminderView::Form';
+	private static $list = 'ReminderView::List';
+
+	private $dataBase;
+	private $reminderModel;
+	private $message = "";
 
 	private $response;
 
+	public function __construct (ReminderDBModel $dataBase) {
+        $this->dataBase = $dataBase;
+	}
+
 	public function response() {
 		if (empty($this->response)) {
-			$this->response = $this->generateCreateButtonHTML();
-		}
-		if (isset($_POST[self::$form])) {
-			$this->response = $this->generateCreateFormHTML();
-		}
-		if (isset($_POST[self::$create])) {
-			$this->response = $this->generateCreateButtonHTML();
+			$this->response = $this->generateCreateButtonHTML($this->message);
 		}
 		
 		return $this->response;
 	}
 
-	public function generateCreateButtonHTML() {
+	public function generateCreateButtonHTML(string $message) {
 		return '
 		<h2>Reminders</h2>
 		' . $this->generateReminderList() . '
+		<p>' . $message .'</p>
 		<form  method="post" >
 			<input type="submit" name="' . self::$form . '" value="Create reminder"/>
 		</form>
 		';
 	}
 
-	public function generateCreateFormHTML() {
+	public function generateCreateFormHTML(string $message) {
 		return '
 		<h2>Reminders</h2>
-		' . $this->generateReminderList() . '
+		<p>' . $message .'</p>
 		<form method="post" >
 			<fieldset>
 				<legend>Create Reminder</legend>
@@ -51,9 +55,20 @@ class ReminderView {
 		';
 	}
 
+	private function generateOptionsHTML(string $message) {
+		return '
+		<p>' . $message .'</p>
+		<form  method="post" >
+			<input type="submit" name="' . self::$list . '" value="Back to list"/>
+		</form>
+		<form  method="post" >
+			<input type="submit" name="' . self::$form . '" value="Create reminder"/>
+		</form>
+		';
+	}
+
 	private function generateReminderList() : string {
-		$dataBase = new ReminderDBModel();
-		$reminders = $dataBase->getAllReminders();
+		$reminders = $this->dataBase->getAllReminders();
 
 		$li = "";
 		foreach ($reminders as $reminder) {
@@ -75,18 +90,34 @@ class ReminderView {
 		return isset($_POST[self::$create]);
 	}
 
+	public function userWantsToViewReminders() : bool {
+		return isset($_POST[self::$list]);
+	}
+
+	public function displayCreateForm() : void {
+		$this->response = $this->generateCreateFormHTML($this->message);
+	}
+
+	public function displayReminderList() : void {
+		$this->response = $this->generateCreateButtonHTML($this->message);
+	}
+
 	public function getReminder () : ReminderModel {
-
-		$reminder = new ReminderModel();
 	
-		$rawReminder = $_POST[self::$reminder];
-		$filteredReminder = trim($rawReminder);
+		$reminder = $_POST[self::$reminder];
+		// $filteredReminder = trim($rawReminder);
 
-		
-		$reminder->setReminder($filteredReminder);
+		try {
+			$this->reminderModel = new ReminderModel($reminder);
+			$this->message = "Reminder was created";
+			$this->response = $this->generateOptionsHTML($this->message);
+		} catch (Exception $e) {
+			$this->message = "The reminder is too long";
+			$this->response = $this->generateCreateFormHTML($this->message);
+		}
 	
 		//RETURNS REMINDER MODEL OBJECT
-		return $reminder;
+		return $this->reminderModel;
 	}
 	
 }

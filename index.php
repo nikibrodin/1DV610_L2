@@ -24,18 +24,17 @@ require_once('model/ReminderModel.php');
 error_reporting(E_ALL);
 ini_set('display_errors', 'On');
 
-//CREATE OBJECTS OF THE VIEWS
-//$view = new View();
-$loginView = new LoginView();
-$registerView = new RegisterView();
-
-$reminderView = new ReminderView();
 $reminderDBModel = new ReminderDBModel();
 
 $dateTimeView = new DateTimeView();
 $layoutView = new LayoutView($dateTimeView);
 $dataBase = new DataBaseModel();
 $userStorage = new UserStorageModel();
+
+$loginView = new LoginView($userStorage, $dataBase);
+$registerView = new RegisterView($dataBase);
+$reminderView = new ReminderView($reminderDBModel);
+
 
 
 $loginController = new LoginController($loginView, $userStorage);

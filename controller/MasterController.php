@@ -18,7 +18,6 @@ class MasterController {
         $this->registerController = $registerController;
         $this->reminderController = $reminderController;
         $this->layoutView = $layoutView;
-        $this->view = new LoginView();
     }
 
     public function run () {

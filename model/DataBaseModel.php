@@ -2,7 +2,10 @@
 
 class DataBaseModel {
 
-    //private $myUsername = "Niki";
+    private static $path = "./database.xml";
+    private static $username = "username";
+    private static $password = "password";
+    private static $user = "user";
 
     //EMPTY CONSTRUCTOR, MAY NOT BE NEEDED.
     public function __construct () {
@@ -15,10 +18,11 @@ class DataBaseModel {
         $userName = $user->getUsername();
         $password = $user->getPassword();
 
-        $xml = simplexml_load_file("./database.xml");
+        $xml = simplexml_load_file(self::$path);
 
         foreach($xml->children() as $child) {
-            if ($child["username"] == $userName && $child["password"] == $password) {
+            // VERIFY HASHED STRING FOR PASSWORD
+            if ($child[self::$username] == $userName && password_verify($password, $child[self::$password])) {
                 return true;
             }
         }
@@ -30,10 +34,10 @@ class DataBaseModel {
     public function userExists(UserModel $user) : bool {
         $userName = $user->getUsername();
 
-        $xml = simplexml_load_file("./database.xml");
+        $xml = simplexml_load_file(self::$path);
 
         foreach($xml->children() as $child) {
-            if ($child["username"] == $userName) {
+            if ($child[self::$username] == $userName) {
                 return true;
             }
         }
@@ -44,25 +48,32 @@ class DataBaseModel {
     public function addUser(UserModel $user) {
 
         $userName = $user->getUsername();
-        $password = $user->getPassword();
+        $hash = password_hash($user->getPassword(), PASSWORD_DEFAULT);
 
-        $xml = simplexml_load_file("./database.xml");
+        $xml = simplexml_load_file(self::$path);
 
-        $user = $xml->addChild('user');
-        $user->addAttribute('username', $userName);
-        $user->addAttribute('password', $password);
+        $user = $xml->addChild(self::$user);
+        $user->addAttribute(self::$username, $userName);
+        $user->addAttribute(self::$password, $hash);
 
-        $xml->asXml("./database.xml");
+        $xml->asXml(self::$path);
     }
 
     public function usernameExists(string $username) {
 
-        $xml = simplexml_load_file("./database.xml");
+        $xml = simplexml_load_file(self::$path);
 
-        foreach($xml->children() as $child) {
-            if ($child["username"] == $username) {
-                throw new Exception("Username already exists");
+        if ($xml->count() == 0) {
+            return false;
+        }
+        else {
+            foreach($xml->children() as $child) {
+                if ($child[self::$username] == $username) {
+                    return true;
+                }
             }
         }
+
+
     }
 }
