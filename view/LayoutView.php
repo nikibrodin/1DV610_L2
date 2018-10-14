@@ -20,7 +20,6 @@ class LayoutView {
         <head>
           <meta charset="utf-8">
           <title>Login Example</title>
-          <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
         </head>
         <body class="container">
           <h1 class="header">Assignment 2</h1>
