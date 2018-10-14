@@ -84,14 +84,14 @@ class LoginView extends View {
 			try {
 				$this->user = new UserModel($username, $password);
 			} catch (Exception $e) {
+				if (empty($username)) {
+					$this->message = 'Username is missing';
+					return false;
+				}
+				 
 				if (empty($password)) {
 					$this->message = 'Password is missing';
 					return false;
-				}
-		
-				if (empty($username)) {
-				   $this->message = 'Username is missing';
-				   return false;
 				}
 			}
 
