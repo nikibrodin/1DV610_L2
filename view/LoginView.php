@@ -82,7 +82,7 @@ class LoginView extends View {
 			$password = trim($_POST[self::$password]);
 
 			try {
-				$this->user = new UserModel($name, $password);
+				$this->user = new UserModel($username, $password);
 			} catch (Exception $e) {
 				if (empty($password)) {
 					$this->message = 'Password is missing';
