@@ -68,30 +68,43 @@ class RegisterView {
     public function validInformation() {
 		if (isset($_POST[self::$register])) {
 			$bool = true;
+			$filteredUsername = trim($_POST[self::$registerName]);
+			$filteredPassword = trim($_POST[self::$registerPassword]);
+			$filteredPasswordRepeat = trim($_POST[self::$registerPasswordRepeat]);
+			//SET SAVED USERNAME
+			self::$savedRegisterName = $filteredUsername;
 
-			$username = new UserNameModel($_POST[self::$registerName]);
+			$username = new UserNameModel($filteredUsername);
 
-			if (strlen($_POST[self::$registerName]) < 4) {
-				$this->message = 'Username has too few characters, at least 3 characters.<br>';
-				$bool = false;
-			}
-	
-			if (strlen($_POST[self::$registerPassword]) < 6) {
-				$this->message .= 'Password has too few characters, at least 6 characters.<br>';
-				$bool = false;
-			}
-	
-			if ($_POST[self::$registerPassword] != $_POST[self::$registerPasswordRepeat]) {
+			if ($filteredPassword != $filteredPasswordRepeat) {
 				$this->message .= 'Passwords do not match.<br>';
 				$bool = false;
-            }
+			}
+			
             if ($this->dataBase->usernameExists($username)) {
 				$this->message .= 'User exists, pick another username.<br>';
                 $bool = false;
 			}
 
-			//SET SAVED USERNAME
-			self::$savedRegisterName = trim($_POST[self::$registerName]);
+			if (preg_match("/[^A-Za-z0-9]/", $filteredUsername)) {
+				$this->message .= 'Username contains invalid characters.<br>';
+                $bool = false;
+			}
+
+			try {
+				$this->user = new UserModel($filteredUsername, $filteredPassword);
+			} catch (Exception $e) {
+				if (strlen($filteredUsername) < 3) {
+					$this->message .= 'Username has too few characters, at least 3 characters.<br>';
+					$bool = false;
+				}
+		
+				if (strlen($filteredPassword) < 6) {
+					$this->message .= 'Password has too few characters, at least 6 characters.<br>';
+					$bool = false;
+				}
+			}
+
 
 			$this->response = $this->generateRegisterFormHTML($this->message);
 
