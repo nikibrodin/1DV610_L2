@@ -1,6 +1,6 @@
 <?php
 
-class LoginView extends View {
+class LoginView {
 	private static $login = 'LoginView::Login';
 	private static $logout = 'LoginView::Logout';
 	private static $name = 'LoginView::UserName';
@@ -129,6 +129,7 @@ class LoginView extends View {
 			$this->user = $this->getCookies();
 			// AUTHENTICATE USER
 			if ($this->dataBase->userExists($this->user)) {
+				if ($this->message = 'Welcome')
 				$this->message = 'Welcome back with cookie';
 				$this->response = $this->generateLogoutButtonHTML($this->message);
 				$bool = true;

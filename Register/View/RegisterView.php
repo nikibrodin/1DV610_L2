@@ -1,6 +1,6 @@
 <?php
 
-class RegisterView extends View {
+class RegisterView {
 
 	private static $register = 'RegisterView::Register';
 	private static $registerName = 'RegisterView::UserName';
