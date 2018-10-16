@@ -136,14 +136,19 @@ class LoginView {
 			return false;
 		}
 
-		if ($this->dataBase->usernameExists($this->username)) {
-			if (isset($_COOKIE[self::$cookiePassword])) {
-				$this->user = $this->getCookies();
-				if (!$this->dataBase->userExists($this->user)) {
-					$this->message = 'Wrong information in cookies';
-					return false;
-				}
+		if (isset($_COOKIE[self::$cookiePassword])) {
+			$this->user = $this->getCookies();
+			if ($this->dataBase->userExists($this->user)) {
+				$this->message = 'Welcome back with cookie';
+				$this->response = $this->generateLogoutButtonHTML($this->message);
+				return true;
+			} else {
+				$this->message = 'Wrong information in cookies';
+				return false;
 			}
+		}
+
+		if ($this->dataBase->usernameExists($this->username)) {
 			$this->message = 'Welcome back with cookie';
 			$this->response = $this->generateLogoutButtonHTML($this->message);
 			return true;
@@ -151,6 +156,8 @@ class LoginView {
 			$this->message = 'Wrong information in cookies';
 			return false;
 		}
+
+
 
 		return false;
 	}
