@@ -4,11 +4,10 @@ session_start();
 
 class UserStorageModel {
 
-    private static $SESSION_KEY_USER = __CLASS__ . "user";
-    private static $SESSION_KEY_USERNAME = __CLASS__ . "username";
+    private static $sessionKey = 'sessionKey::User';
 
     public function isSet() {
-		if (isset($_SESSION[self::$SESSION_KEY_USER])) {
+		if (isset($_SESSION[self::$sessionKey])) {
 			return true;
 		} else {
 			return false;
@@ -16,19 +15,7 @@ class UserStorageModel {
 	}
 
     public function saveUser(UserModel $user) {
-        $_SESSION[self::$SESSION_KEY_USER] = $user;
-    }
-
-    public function isUsernameSet() {
-		if (isset($_SESSION[self::$SESSION_KEY_USERNAME])) {
-			return true;
-		} else {
-			return false;
-		}
-    }
-    
-    public function saveUsername(UserNameModel $username) {
-        $_SESSION[self::$SESSION_KEY_USERNAME] = $username;
+        $_SESSION[self::$sessionKey] = $user;
     }
 
     public function getSessID() {
@@ -36,7 +23,7 @@ class UserStorageModel {
     }
 
     public function clear() {
-        unset($_SESSION[self::$SESSION_KEY_USER]);
+        unset($_SESSION[self::$sessionKey]);
         session_destroy();
     }
 }

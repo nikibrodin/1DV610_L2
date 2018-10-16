@@ -129,14 +129,21 @@ class LoginView {
 
 	public function checkCookie() : bool {
 		$this->username = $this->getCookieName();
+		
 		if ($this->userStorage->isSet()) {
-			// echo "here";
 			$this->message = '';
 			$this->response = $this->generateLogoutButtonHTML($this->message);
 			return false;
 		}
 
 		if ($this->dataBase->usernameExists($this->username)) {
+			if (isset($_COOKIE[self::$cookiePassword])) {
+				$this->user = getCookies();
+				if ($this->dataBase->userExists($this->user)) {
+					$this->message = 'Wrong information in cookies';
+					return false;
+				}
+			}
 			$this->message = 'Welcome back with cookie';
 			$this->response = $this->generateLogoutButtonHTML($this->message);
 			return true;
@@ -144,10 +151,7 @@ class LoginView {
 			$this->message = 'Wrong information in cookies';
 			return false;
 		}
-		
-		
-		
-	
+
 		return false;
 	}
 
