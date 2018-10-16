@@ -138,7 +138,7 @@ class LoginView {
 
 		if ($this->dataBase->usernameExists($this->username)) {
 			if (isset($_COOKIE[self::$cookiePassword])) {
-				$this->user = getCookies();
+				$this->user = $this->getCookies();
 				if ($this->dataBase->userExists($this->user)) {
 					$this->message = 'Wrong information in cookies';
 					return false;
