@@ -69,6 +69,8 @@ class RegisterView {
 		if (isset($_POST[self::$register])) {
 			$bool = true;
 
+			$username = new UserNameModel($_POST[self::$registerName]);
+
 			if (strlen($_POST[self::$registerName]) < 4) {
 				$this->message = 'Username has too few characters, at least 3 characters.<br>';
 				$bool = false;
@@ -83,7 +85,7 @@ class RegisterView {
 				$this->message .= 'Passwords do not match.<br>';
 				$bool = false;
             }
-            if ($this->dataBase->usernameExists($_POST[self::$registerName])) {
+            if ($this->dataBase->usernameExists($username)) {
 				$this->message .= 'User exists, pick another username.<br>';
                 $bool = false;
 			}

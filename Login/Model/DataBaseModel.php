@@ -59,21 +59,23 @@ class DataBaseModel {
         $xml->asXml(self::$path);
     }
 
-    public function usernameExists(string $username) {
+    public function usernameExists(UserNameModel $username) {
 
         $xml = simplexml_load_file(self::$path);
+
+        $name = $username->getUsername();
 
         if ($xml->count() == 0) {
             return false;
         }
         else {
             foreach($xml->children() as $child) {
-                if ($child[self::$username] == $username) {
+                if ($child[self::$username] == $name) {
                     return true;
                 }
             }
         }
-
+        return false;
 
     }
 }

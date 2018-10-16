@@ -11,6 +11,7 @@ require_once('Login/View/LoginView.php');
 require_once('Login/Model/UserModel.php');
 require_once('Login/Model/DataBaseModel.php');
 require_once('Login/Model/UserStorageModel.php');
+require_once('Login/Model/UserNameModel.php');
 
 //Registration Module
 require_once('Register/Controller/RegisterController.php');
