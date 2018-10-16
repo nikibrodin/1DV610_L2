@@ -72,7 +72,8 @@ class RegisterView {
 			$filteredPassword = trim($_POST[self::$registerPassword]);
 			$filteredPasswordRepeat = trim($_POST[self::$registerPasswordRepeat]);
 			//SET SAVED USERNAME
-			self::$savedRegisterName = $filteredUsername;
+			$toSave = strip_tags($filteredUsername);;
+			self::$savedRegisterName = $toSave;
 
 			$username = new UserNameModel($filteredUsername);
 
