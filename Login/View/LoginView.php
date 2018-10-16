@@ -14,6 +14,7 @@ class LoginView {
 	private $userStorage;
 	private $dataBase;
 	private $user;
+	private $username;
 
 	private static $savedName = '';
 	private $message = '';
@@ -123,37 +124,31 @@ class LoginView {
 	}
 
 	public function userWantsToLoginWithCookies() : bool {
-		$bool = false;
+		return isset($_COOKIE[self::$cookieName]);
+	}
 
-		if (isset($_COOKIE[self::$cookieName])) {
-			$this->username = $this->getCookieName();
-			if ($this->dataBase->usernameExists($this->username)) {
-				// if ($this->message = 'Welcome')
-				$this->message = 'Welcome back with cookie';
-				$this->response = $this->generateLogoutButtonHTML($this->message);
-				$bool = true;
-			} else {
-				$this->message = 'Wrong information in cookies';
-				$bool = false;
-			}
+	public function checkCookie() : bool {
+		$this->username = $this->getCookieName();
+		if ($this->userStorage->isSet()) {
+			// echo "here";
+			$this->message = '';
+			$this->response = $this->generateLogoutButtonHTML($this->message);
+			return false;
 		}
 
-		if (isset($_COOKIE[self::$cookieName]) && isset($_COOKIE[self::$cookiePassword])) {
-			$this->user = $this->getCookies();
-
-			if ($this->dataBase->userExists($this->user)) {
-				// if ($this->message = 'Welcome')
-				$this->message = 'Welcome back with cookie';
-				$this->response = $this->generateLogoutButtonHTML($this->message);
-				$bool = true;
-			} else {
-				$this->message = 'Wrong information in cookies';
-				$bool = false;
-			}
+		if ($this->dataBase->usernameExists($this->username)) {
+			$this->message = 'Welcome back with cookie';
+			$this->response = $this->generateLogoutButtonHTML($this->message);
+			return true;
+		} else {
+			$this->message = 'Wrong information in cookies';
+			return false;
 		}
-
-
-		return $bool;
+		
+		
+		
+	
+		return false;
 	}
 
 	//CHECKS IF WANT TO LOGOUT.

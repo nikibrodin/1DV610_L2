@@ -65,14 +65,9 @@ class DataBaseModel {
 
         $name = $username->getUsername();
 
-        if ($xml->count() == 0) {
-            return false;
-        }
-        else {
-            foreach($xml->children() as $child) {
-                if ($child[self::$username] == $name) {
-                    return true;
-                }
+        foreach($xml->children() as $child) {
+        if ($child[self::$username] == $name) {
+                return true;
             }
         }
         return false;
