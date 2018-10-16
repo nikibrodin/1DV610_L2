@@ -138,8 +138,8 @@ class LoginView {
 
 		if (isset($_COOKIE[self::$cookiePassword])) {
 			$this->user = $this->getCookies();
-			if ($this->dataBase->userExists($this->user)) {
-				$this->message = 'Welcome back with cookie 1';
+			if ($this->dataBase->isAuthenticated($this->user)) {
+				$this->message = 'Welcome back with cookie';
 				$this->response = $this->generateLogoutButtonHTML($this->message);
 				return true;
 			} else {
@@ -149,7 +149,7 @@ class LoginView {
 		}
 
 		if ($this->dataBase->usernameExists($this->username)) {
-			$this->message = 'Welcome back with cookie 2';
+			$this->message = 'Welcome back with cookie';
 			$this->response = $this->generateLogoutButtonHTML($this->message);
 			return true;
 		} else {

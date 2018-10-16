@@ -31,20 +31,6 @@ class DataBaseModel {
 
     }
 
-    public function userExists(UserModel $user) : bool {
-        $userName = $user->getUsername();
-
-        $xml = simplexml_load_file(self::$path);
-
-        foreach($xml->children() as $child) {
-            if ($child[self::$username] == $userName) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public function addUser(UserModel $user) {
 
         $userName = $user->getUsername();
