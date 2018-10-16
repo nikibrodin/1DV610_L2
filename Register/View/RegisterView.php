@@ -131,7 +131,7 @@ class RegisterView {
 		
 
         // REDIRECT TO MAIN PAGE
-        header('Location: ?');
+        // header('Location: ?');
         //exit;
 		//RETURNS USERMODEL OBJECT
 		return $this->user;
