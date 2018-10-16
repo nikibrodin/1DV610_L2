@@ -127,13 +127,22 @@ class LoginView {
 
 		if (isset($_COOKIE[self::$cookieName])) {
 			$this->username = $this->getCookieName();
+			if ($this->dataBase->usernameExists($this->username)) {
+				// if ($this->message = 'Welcome')
+				$this->message = 'Welcome back with cookie';
+				$this->response = $this->generateLogoutButtonHTML($this->message);
+				$bool = true;
+			} else {
+				$this->message = 'Wrong information in cookies';
+				$bool = false;
+			}
 		}
 
 		if (isset($_COOKIE[self::$cookieName]) && isset($_COOKIE[self::$cookiePassword])) {
 			$this->user = $this->getCookies();
 
 			if ($this->dataBase->userExists($this->user)) {
-				if ($this->message = 'Welcome')
+				// if ($this->message = 'Welcome')
 				$this->message = 'Welcome back with cookie';
 				$this->response = $this->generateLogoutButtonHTML($this->message);
 				$bool = true;
