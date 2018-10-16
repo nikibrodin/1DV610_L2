@@ -124,10 +124,14 @@ class LoginView {
 
 	public function userWantsToLoginWithCookies() : bool {
 		$bool = false;
-		// SHOULD RETURN A MODEL OBJECT (USER)
+
 		if (isset($_COOKIE[self::$cookieName])) {
+			$this->username = $this->getCookieName();
+		}
+
+		if (isset($_COOKIE[self::$cookieName]) && isset($_COOKIE[self::$cookiePassword])) {
 			$this->user = $this->getCookies();
-			// AUTHENTICATE USER
+
 			if ($this->dataBase->userExists($this->user)) {
 				if ($this->message = 'Welcome')
 				$this->message = 'Welcome back with cookie';
@@ -138,6 +142,8 @@ class LoginView {
 				$bool = false;
 			}
 		}
+
+
 		return $bool;
 	}
 
@@ -158,11 +164,8 @@ class LoginView {
 		return isset($_GET[self::$registerLink]);
 	}
 
-	private function getCookies() : UserModel {
-		if (isset($_COOKIE[self::$cookieName])) {
-			$this->user = new UserModel($_COOKIE[self::$cookieName], $_COOKIE[self::$cookiePassword]);
-		}
-		return $this->user;
+	private function getCookies() : UserModel {		
+		return new UserModel($_COOKIE[self::$cookieName], $_COOKIE[self::$cookiePassword]);;
 
 	}
 
@@ -171,7 +174,6 @@ class LoginView {
 		return isset($_POST[self::$keep]);
 	}
 	
-	//SET COOKIES
 	public function setCookies(UserModel $user) {
 		$this->setCookieName($user->getUsername());
 		$this->setCookiePassword($user->getPassword());
@@ -184,22 +186,19 @@ class LoginView {
 		}
 	}
 
-	// GET COOKIE
-	public function getCookieName() {
+	private function getCookieName() {
 		if (isset($_COOKIE[self::$cookieName])) {
-			return $_COOKIE[self::$cookieName];
+			return new UserNameModel($_COOKIE[self::$cookieName]);
 		} else {
 			return;
 		}
 	}
 
-	// SET COOKIE
-    public function setCookieName($name) {
+    private function setCookieName($name) {
 		setcookie(self::$cookieName, $name);
 	}
 	
-	// GET COOKIE PASSWORD
-	public function getCookiePassword() {
+	private function getCookiePassword() {
 		if (isset($_COOKIE[self::$cookiePassword])) {
 			return $_COOKIE[self::$cookiePassword];
 		} else {
@@ -207,8 +206,7 @@ class LoginView {
 		}
 	}
 
-	// SET COOKIE
-    public function setCookiePassword($password) {
+    private function setCookiePassword($password) {
 		setcookie(self::$cookiePassword, $password);
 	}
 	
