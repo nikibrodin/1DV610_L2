@@ -13,7 +13,8 @@ class RegisterView {
 
 	private static $savedRegisterName = '';
 	private $message = '';
-    private $response;
+	private $response;
+	private $validated = false;
     
     public function __construct (DataBaseModel $dataBase) {
 		$this->dataBase = $dataBase;
@@ -58,7 +59,7 @@ class RegisterView {
     }
     
     public function userWantsLoginForm() : bool {
-        return empty($_GET);
+        return $this->validated;
     }
 
 	public function userWantsToRegister() : bool {
@@ -67,7 +68,7 @@ class RegisterView {
     
     public function validInformation() {
 		if (isset($_POST[self::$register])) {
-			$bool = true;
+			$this->validated = true;
 			$filteredUsername = trim($_POST[self::$registerName]);
 			$filteredPassword = trim($_POST[self::$registerPassword]);
 			$filteredPasswordRepeat = trim($_POST[self::$registerPasswordRepeat]);
@@ -79,17 +80,17 @@ class RegisterView {
 
 			if ($filteredPassword != $filteredPasswordRepeat) {
 				$this->message .= 'Passwords do not match.<br>';
-				$bool = false;
+				$this->validated = false;
 			}
 			
             if ($this->dataBase->usernameExists($username)) {
 				$this->message .= 'User exists, pick another username.<br>';
-                $bool = false;
+                $this->validated = false;
 			}
 
 			if (preg_match("/[^A-Za-z0-9]/", $filteredUsername)) {
 				$this->message .= 'Username contains invalid characters.<br>';
-                $bool = false;
+                $this->validated = false;
 			}
 
 			try {
@@ -97,19 +98,19 @@ class RegisterView {
 			} catch (Exception $e) {
 				if (strlen($filteredUsername) < 3) {
 					$this->message .= 'Username has too few characters, at least 3 characters.<br>';
-					$bool = false;
+					$this->validated = false;
 				}
 		
 				if (strlen($filteredPassword) < 6) {
 					$this->message .= 'Password has too few characters, at least 6 characters.<br>';
-					$bool = false;
+					$this->validated = false;
 				}
 			}
 
 
 			$this->response = $this->generateRegisterFormHTML($this->message);
 
-			return $bool;
+			return $this->validated;
 		}
 
 		return false;
@@ -119,7 +120,6 @@ class RegisterView {
 		$rawUsername = $_POST[self::$registerName];
 		$filteredUsername = trim($rawUsername);
 
-		//RETURN REQUEST VARIABLE: REGISTER PASSWORD
 		$rawPassword = $_POST[self::$registerPassword];
 		$filteredPassword = trim($rawPassword);
 

@@ -10,6 +10,7 @@ class LoginView {
 	private static $keep = 'LoginView::KeepMeLoggedIn';
 	private static $messageId = 'LoginView::Message';
 	private static $registerLink = 'register';
+	private static $registerUsername = 'RegisterView::UserName';
 
 	private $userStorage;
 	private $dataBase;
@@ -32,6 +33,11 @@ class LoginView {
 
 		if ($this->userStorage->isSet()) {
 			$this->response = $this->generateLogoutButtonHTML($this->message);
+		}
+
+		if (isset($_POST[self::$registerUsername])) {
+			echo "something";
+			self::$savedName = trim($_POST[self::$registerUsername]);
 		}
 		
 		return $this->response;
@@ -75,7 +81,7 @@ class LoginView {
 		';
 	}
 
-	public function userWantsToLogin() : bool {		
+	public function userWantsToLogin() : bool {
 		// IF LOGIN
 		if (isset($_POST[self::$login])) {
 			$username = trim($_POST[self::$name]);
