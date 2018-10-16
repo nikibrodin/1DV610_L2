@@ -128,11 +128,9 @@ class RegisterView {
 		} catch (Exception $e) {
 			
 		}
-		
-
         // REDIRECT TO MAIN PAGE
-        // header('Location: ?');
-        //exit;
+		header('Location: ?');
+		
 		//RETURNS USERMODEL OBJECT
 		return $this->user;
 	}	
