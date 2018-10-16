@@ -31,8 +31,9 @@ class LoginController {
 
         //THE USER HAS COOKIES
         if ($this->loginView->userWantsToLoginWithCookies()) {
-            $this->loginView->checkCookie();
-            $this->authenticated = true;
+            if ($this->loginView->checkCookie()) {
+                $this->authenticated = true;
+            }
         } 
 
         if ($this->loginView->userWantsToLogout()) {
