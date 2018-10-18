@@ -1,7 +1,7 @@
 # PHP LOGIN MODULE
 To install: 
 
-Clone this repository.
+Download the project.
 
 Run script to create necessary xml-files. These are .gitignored so they will not be pushed to github.
 
@@ -13,6 +13,6 @@ Use cases not yet implemented:
  * 3.6, Stop session hijacking
  * 3.7, Cookies are randomly generated
  * 3.8, Cookie Passwords are temporary
- * 4.10: Successful registration
+ * 4.10: Successful registration (only partially implemented)
 
 Manual test cases can be found in the Wiki of this GitHub repository.
