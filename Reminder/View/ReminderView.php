@@ -15,6 +15,44 @@ class ReminderView {
         $this->dataBase = $dataBase;
 	}
 
+	public function userWantsCreateForm() : bool {
+		return isset($_POST[self::$form]);
+	}
+
+	public function displayCreateForm() : void {
+		$this->response = $this->generateCreateFormHTML();
+	}
+
+	public function userWantsToCreateReminder() : bool {
+		return isset($_POST[self::$create]);
+	}
+
+	public function getReminder () {
+			$rawReminder = $_POST[self::$reminder];
+			$filteredReminder = trim($rawReminder);
+			$this->reminderModel = new ReminderModel($filteredReminder);
+	
+			//RETURNS REMINDER MODEL OBJECT
+			return $this->reminderModel;
+	}
+
+	public function displayReminders() {
+		$this->response = $this->generateCreateButtonHTML();
+	}
+
+	public function userWantsToDeleteReminder() : bool {
+		return isset($_POST[self::$delete]);
+	}
+
+	public function getReminderToDelete() {
+		$rawReminder = $_POST[self::$delete];
+		$filteredReminder = trim($rawReminder);
+		$this->reminderModel = new ReminderModel($filteredReminder);
+	
+		//RETURNS REMINDER MODEL OBJECT
+		return $this->reminderModel;
+	}	
+
 	public function response() {
 		if (empty($this->response)) {
 			$this->response = $this->generateCreateButtonHTML();
@@ -23,7 +61,7 @@ class ReminderView {
 		return $this->response;
 	}
 
-	public function generateCreateButtonHTML() {
+	private function generateCreateButtonHTML() {
 		return '
 		<h2>Reminders</h2>
 		' . $this->generateReminderList() . '
@@ -33,7 +71,7 @@ class ReminderView {
 		';
 	}
 
-	public function generateCreateFormHTML() {
+	private function generateCreateFormHTML() {
 		return '
 		<h2>Reminders</h2>
 		<form method="post" >
@@ -64,44 +102,5 @@ class ReminderView {
 				</ul>
 			</div>';
 	}
-
-	public function userWantsCreateForm() : bool {
-		return isset($_POST[self::$form]);
-	}
-
-	public function userWantsToDeleteReminder() : bool {
-		return isset($_POST[self::$delete]);
-	}
-
-	public function userWantsToCreateReminder() : bool {
-		return isset($_POST[self::$create]);
-	}
-
-	public function displayCreateForm() : void {
-		$this->response = $this->generateCreateFormHTML();
-	}
-
-	public function getReminder () {
-
-			$rawReminder = $_POST[self::$reminder];
-			$filteredReminder = trim($rawReminder);
-			$this->reminderModel = new ReminderModel($filteredReminder);
-	
-			//RETURNS REMINDER MODEL OBJECT
-			return $this->reminderModel;
-
-	}
-	public function displayReminders() {
-		$this->response = $this->generateCreateButtonHTML();
-	}
-
-	public function getReminderToDelete() {
-		$rawReminder = $_POST[self::$delete];
-		$filteredReminder = trim($rawReminder);
-		$this->reminderModel = new ReminderModel($filteredReminder);
-	
-		//RETURNS REMINDER MODEL OBJECT
-		return $this->reminderModel;
-	}	
 }
 

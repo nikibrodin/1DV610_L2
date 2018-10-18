@@ -16,7 +16,7 @@ class RegisterController {
 
         if ($this->registerView->userWantsToRegister()) {
             // SHOULD RETURN A MODEL OBJECT (USER)
-            if ($this->registerView->validInformation()) {
+            if ($this->registerView->validRegistrationInformation()) {
                 $this->user = $this->registerView->getRegisteredUser();
                 $this->dataBase->addUser($this->user);
                 $this->validInformation = true;

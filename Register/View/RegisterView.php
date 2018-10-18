@@ -18,6 +18,73 @@ class RegisterView {
     
     public function __construct (DataBaseModel $dataBase) {
 		$this->dataBase = $dataBase;
+	}
+	
+	public function userWantsToRegister() : bool {
+		return isset($_POST[self::$register]);
+    }
+    
+    public function validRegistrationInformation() {
+		if (isset($_POST[self::$register])) {
+			$this->validated = true;
+			$filteredUsername = trim($_POST[self::$registerName]);
+			$filteredPassword = trim($_POST[self::$registerPassword]);
+			$filteredPasswordRepeat = trim($_POST[self::$registerPasswordRepeat]);
+			
+			//SET SAVED USERNAME
+			$toSave = strip_tags($filteredUsername);;
+			self::$savedRegisterName = $toSave;
+
+			$username = new UserNameModel($filteredUsername);
+
+			if ($filteredPassword != $filteredPasswordRepeat) {
+				$this->message .= 'Passwords do not match.<br>';
+				$this->validated = false;
+			}
+			
+            if ($this->dataBase->usernameExists($username)) {
+				$this->message .= 'User exists, pick another username.<br>';
+                $this->validated = false;
+			}
+
+			// CHECK ALLOWED CHARACTERS
+			if (preg_match("/[^A-Za-z0-9]/", $filteredUsername)) {
+				$this->message .= 'Username contains invalid characters.<br>';
+                $this->validated = false;
+			}
+
+			try {
+				$this->user = new UserModel($filteredUsername, $filteredPassword);
+			} catch (Exception $e) {
+				if (strlen($filteredUsername) < 3) {
+					$this->message .= 'Username has too few characters, at least 3 characters.<br>';
+					$this->validated = false;
+				}
+		
+				if (strlen($filteredPassword) < 6) {
+					$this->message .= 'Password has too few characters, at least 6 characters.<br>';
+					$this->validated = false;
+				}
+			}
+
+			$this->response = $this->generateRegisterFormHTML($this->message);
+
+			return $this->validated;
+		}
+
+		return false;
+    }
+
+	public function getRegisteredUser() : UserModel  {
+        // REDIRECT TO MAIN PAGE
+		header('Location: ?');
+		
+		//RETURNS USERMODEL OBJECT
+		return $this->user;
+	}
+
+	public function userWantsLoginForm() : bool {
+        return $this->validated;
     }
 
 	public function response() {
@@ -57,82 +124,4 @@ class RegisterView {
 			</form>
 		';
     }
-    
-    public function userWantsLoginForm() : bool {
-        return $this->validated;
-    }
-
-	public function userWantsToRegister() : bool {
-		return isset($_POST[self::$register]);
-    }
-    
-    public function validInformation() {
-		if (isset($_POST[self::$register])) {
-			$this->validated = true;
-			$filteredUsername = trim($_POST[self::$registerName]);
-			$filteredPassword = trim($_POST[self::$registerPassword]);
-			$filteredPasswordRepeat = trim($_POST[self::$registerPasswordRepeat]);
-			//SET SAVED USERNAME
-			$toSave = strip_tags($filteredUsername);;
-			self::$savedRegisterName = $toSave;
-
-			$username = new UserNameModel($filteredUsername);
-
-			if ($filteredPassword != $filteredPasswordRepeat) {
-				$this->message .= 'Passwords do not match.<br>';
-				$this->validated = false;
-			}
-			
-            if ($this->dataBase->usernameExists($username)) {
-				$this->message .= 'User exists, pick another username.<br>';
-                $this->validated = false;
-			}
-
-			if (preg_match("/[^A-Za-z0-9]/", $filteredUsername)) {
-				$this->message .= 'Username contains invalid characters.<br>';
-                $this->validated = false;
-			}
-
-			try {
-				$this->user = new UserModel($filteredUsername, $filteredPassword);
-			} catch (Exception $e) {
-				if (strlen($filteredUsername) < 3) {
-					$this->message .= 'Username has too few characters, at least 3 characters.<br>';
-					$this->validated = false;
-				}
-		
-				if (strlen($filteredPassword) < 6) {
-					$this->message .= 'Password has too few characters, at least 6 characters.<br>';
-					$this->validated = false;
-				}
-			}
-
-
-			$this->response = $this->generateRegisterFormHTML($this->message);
-
-			return $this->validated;
-		}
-
-		return false;
-    }
-
-	public function getRegisteredUser() : UserModel  {
-		$rawUsername = $_POST[self::$registerName];
-		$filteredUsername = trim($rawUsername);
-
-		$rawPassword = $_POST[self::$registerPassword];
-		$filteredPassword = trim($rawPassword);
-
-		try {
-			$this->user = new UserModel($filteredUsername, $filteredPassword);
-		} catch (Exception $e) {
-			
-		}
-        // REDIRECT TO MAIN PAGE
-		header('Location: ?');
-		
-		//RETURNS USERMODEL OBJECT
-		return $this->user;
-	}	
-	
 }

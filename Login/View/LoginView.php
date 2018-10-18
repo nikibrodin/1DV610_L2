@@ -23,7 +23,118 @@ class LoginView {
 	public function __construct (UserStorageModel $userStorage, DataBaseModel $dataBase) {
 		$this->userStorage = $userStorage;
 		$this->dataBase = $dataBase;
-    }
+	}
+	
+	public function userWantsToLogin() : bool {
+		if (isset($_POST[self::$login])) {
+			$username = trim($_POST[self::$name]);
+			self::$savedName = $username;
+			$password = trim($_POST[self::$password]);
+
+			try {
+				$this->user = new UserModel($username, $password);
+			} catch (Exception $e) {
+				if (empty($username)) {
+					$this->message = 'Username is missing';
+					return false;
+				}
+				 
+				if (empty($password)) {
+					$this->message = 'Password is missing';
+					return false;
+				}
+			}
+
+			if (!$this->dataBase->isAuthenticated($this->user)) {
+				$this->message = 'Wrong name or password';
+				return false;
+			}
+
+			$this->response = $this->generateLoginFormHTML($this->message);
+
+			if ($this->userStorage->isSet()) {
+				$this->message = '';
+				$this->response = $this->generateLogoutButtonHTML($this->message);
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public function getRequestUserName() : UserModel {
+		$this->message = 'Welcome';
+		$this->response = $this->generateLogoutButtonHTML($this->message);
+		//RETURNS USERMODEL OBJECT
+		return $this->user;
+	}
+
+	public function keepLoggedIn() : bool {
+		return isset($_POST[self::$keep]);
+	}
+	
+	public function setCookies(UserModel $user) {
+		$this->setCookieName($user->getUsername());
+		$this->setCookiePassword($user->getPassword());
+	}
+
+	public function userWantsToLoginWithCookies() : bool {
+		return isset($_COOKIE[self::$cookieName]);
+	}
+
+	public function checkCookie() : bool {
+		$this->username = $this->getCookieName();
+		
+		if ($this->userStorage->isSet()) {
+			$this->message = '';
+			$this->response = $this->generateLogoutButtonHTML($this->message);
+			return false;
+		}
+
+		if (isset($_COOKIE[self::$cookiePassword])) {
+			$this->user = $this->getCookies();
+			if ($this->dataBase->isAuthenticated($this->user)) {
+				$this->message = 'Welcome back with cookie';
+				$this->response = $this->generateLogoutButtonHTML($this->message);
+				return true;
+			} else {
+				$this->message = 'Wrong information in cookies';
+				return false;
+			}
+		}
+
+		if ($this->dataBase->usernameExists($this->username)) {
+			$this->message = 'Welcome back with cookie';
+			$this->response = $this->generateLogoutButtonHTML($this->message);
+			return true;
+		} else {
+			$this->message = 'Wrong information in cookies';
+			return false;
+		}
+		return false;
+	}
+
+	//CHECKS IF WANT TO LOGOUT.
+	public function userWantsToLogout() : bool {
+		$userWantsToLogout = false;
+		if (isset($_POST[self::$logout])) {
+			$userWantsToLogout = true;
+			$this->message = 'Bye bye!';
+			if (!$this->userStorage->isSet()) { $this->message = ''; }
+		}
+		return $userWantsToLogout;	
+	}
+
+	public function removeCookies() {
+		if (isset($_COOKIE[self::$cookieName]) && isset($_COOKIE[self::$cookiePassword])) {
+			setcookie(self::$cookieName, "", time()-3600);
+			setcookie(self::$cookiePassword, "", time()-3600);
+		}
+	}
+
+	public function userWantsRegisterForm() {
+		return isset($_GET[self::$registerLink]);
+	}
 
 	public function response() {
 		if (empty($this->response)) {
@@ -75,130 +186,9 @@ class LoginView {
 		';
 	}
 
-	public function userWantsToLogin() : bool {
-		// IF LOGIN
-		if (isset($_POST[self::$login])) {
-			$username = trim($_POST[self::$name]);
-			self::$savedName = $username;
-			$password = trim($_POST[self::$password]);
-
-			try {
-				$this->user = new UserModel($username, $password);
-			} catch (Exception $e) {
-				if (empty($username)) {
-					$this->message = 'Username is missing';
-					return false;
-				}
-				 
-				if (empty($password)) {
-					$this->message = 'Password is missing';
-					return false;
-				}
-			}
-
-			if (!$this->dataBase->isAuthenticated($this->user)) {
-				$this->message = 'Wrong name or password';
-				return false;
-			}
-
-			$this->response = $this->generateLoginFormHTML($this->message);
-
-			if ($this->userStorage->isSet()) {
-				$this->message = '';
-				$this->response = $this->generateLogoutButtonHTML($this->message);
-				return false;
-			}
-			return true;
-		}
-		return false;
-	}
-
-	//CREATE GET-FUNCTIONS TO FETCH REQUEST VARIABLES
-	public function getRequestUserName() : UserModel {
-
-		$this->message = 'Welcome';
-		$this->response = $this->generateLogoutButtonHTML($this->message);
-	
-		//RETURNS USERMODEL OBJECT
-		return $this->user;
-	}
-
-	public function userWantsToLoginWithCookies() : bool {
-		return isset($_COOKIE[self::$cookieName]);
-	}
-
-	public function checkCookie() : bool {
-		$this->username = $this->getCookieName();
-		
-		if ($this->userStorage->isSet()) {
-			$this->message = '';
-			$this->response = $this->generateLogoutButtonHTML($this->message);
-			return false;
-		}
-
-		if (isset($_COOKIE[self::$cookiePassword])) {
-			$this->user = $this->getCookies();
-			if ($this->dataBase->isAuthenticated($this->user)) {
-				$this->message = 'Welcome back with cookie';
-				$this->response = $this->generateLogoutButtonHTML($this->message);
-				return true;
-			} else {
-				$this->message = 'Wrong information in cookies';
-				return false;
-			}
-		}
-
-		if ($this->dataBase->usernameExists($this->username)) {
-			$this->message = 'Welcome back with cookie';
-			$this->response = $this->generateLogoutButtonHTML($this->message);
-			return true;
-		} else {
-			$this->message = 'Wrong information in cookies';
-			return false;
-		}
-
-
-
-		return false;
-	}
-
-	//CHECKS IF WANT TO LOGOUT.
-	public function userWantsToLogout() : bool {
-		$bool = false;
-		if (isset($_POST[self::$logout])) {
-			$bool = true;
-			$this->message = 'Bye bye!';
-			if (!$this->userStorage->isSet()) {
-				$this->message = '';
-			}
-		}
-		return $bool;	
-	}
-
-	public function userWantsRegisterForm() {
-		return isset($_GET[self::$registerLink]);
-	}
-
 	private function getCookies() : UserModel {		
 		return new UserModel($_COOKIE[self::$cookieName], $_COOKIE[self::$cookiePassword]);;
 
-	}
-
-	//CHECKS IF USER WANTS TO KEEP BEING LOGGED IN.
-	public function keepLoggedIn() : bool {
-		return isset($_POST[self::$keep]);
-	}
-	
-	public function setCookies(UserModel $user) {
-		$this->setCookieName($user->getUsername());
-		$this->setCookiePassword($user->getPassword());
-	}
-
-	public function removeCookies() {
-		if (isset($_COOKIE[self::$cookieName]) && isset($_COOKIE[self::$cookiePassword])) {
-			setcookie(self::$cookieName, "", time()-3600);
-			setcookie(self::$cookiePassword, "", time()-3600);
-		}
 	}
 
 	private function getCookieName() {
